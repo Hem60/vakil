@@ -23,7 +23,7 @@ FIXTURE = Path("data/fixtures/pod")
 def settings(**overrides: object) -> Settings:
     base = Settings(
         gemini_api_key="test-key",
-        vakil_gemini_model="gemini-2.5-flash",
+        vakil_gemini_model="gemini-3.6-flash",
         vakil_gemini_rpm=6000,  # effectively no throttle inside tests
     )
     return base.model_copy(update=overrides)
@@ -82,7 +82,7 @@ def test_sends_the_pdf_inline_with_a_response_schema():
 
     GeminiExtractor(settings(), transport(handler)).extract(any_document())
 
-    assert "gemini-2.5-flash:generateContent" in seen["url"]
+    assert "gemini-3.6-flash:generateContent" in seen["url"]
     assert "key=test-key" in seen["url"]
     parts = seen["body"]["contents"][0]["parts"]
     assert parts[0]["inline_data"]["mime_type"] == "application/pdf"
@@ -110,7 +110,7 @@ def test_parses_a_well_formed_response():
     ).extract(any_document())
 
     assert result.extracted.tracking_id.value == "EKA335441403"
-    assert result.model == "gemini-2.5-flash"
+    assert result.model == "gemini-3.6-flash"
     assert result.input_tokens == 1800
     assert result.output_tokens == 220
 

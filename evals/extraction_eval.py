@@ -174,10 +174,31 @@ def run(
     }
 
 
+def failure_section(report: dict[str, Any]) -> list[str]:
+    if not report["failures"]:
+        return []
+    lines = ["", "## Failures", ""]
+    for failure in report["failures"][:10]:
+        lines.append(f"- `{failure['document']}`: {failure['error']}")
+    if len(report["failures"]) > 10:
+        lines.append(f"- ...and {len(report['failures']) - 10} more")
+    return lines
+
+
 def render(report: dict[str, Any], model: str) -> str:
     o = report["overall"]
     if not o:
-        return "# Extraction evaluation\n\nNo documents scored."
+        # A run where everything failed must say why. The first version returned
+        # "No documents scored" and dropped the errors on the floor, turning a
+        # one-line diagnosis into a hunt through the JSON.
+        return "\n".join(
+            [
+                "# Extraction evaluation",
+                "",
+                f"**No documents scored** | model `{model}`",
+                *failure_section(report),
+            ]
+        )
 
     lines = [
         "# Extraction evaluation",
@@ -232,10 +253,7 @@ def render(report: dict[str, Any], model: str) -> str:
         f"{report['seconds']}s",
     ]
 
-    if report["failures"]:
-        lines += ["", "## Failures", ""]
-        for failure in report["failures"][:10]:
-            lines.append(f"- `{failure['document']}`: {failure['error']}")
+    lines += failure_section(report)
 
     lines += [
         "",

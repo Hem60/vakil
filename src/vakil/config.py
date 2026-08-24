@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     #: mixed stack is desirable. The extraction eval reports both backends
     #: side by side so the choice rests on measurements. See D10.
     gemini_api_key: str = ""
-    vakil_gemini_model: str = "gemini-2.5-flash"
+    vakil_gemini_model: str = "gemini-3.6-flash"
     #: Free-tier requests per minute. The extractor throttles to this rather
     #: than discovering the limit through a wall of 429s.
     vakil_gemini_rpm: int = 10
