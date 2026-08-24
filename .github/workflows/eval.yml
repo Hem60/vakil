@@ -45,6 +45,9 @@ jobs:
       - name: Held-out evaluation
         run: python evals/run_eval.py --fail-under-f1 0.60
 
+      - name: Cost sensitivity sweep
+        run: python evals/cost_sweep.py
+
       - name: Publish report
         uses: actions/upload-artifact@v4
         with:
@@ -52,7 +55,11 @@ jobs:
           path: |
             evals/report.md
             evals/report.json
+            evals/cost_sweep.md
+            evals/cost_sweep.json
 
       - name: Summary
         if: always()
-        run: cat evals/report.md >> "$GITHUB_STEP_SUMMARY"
+        run: |
+          cat evals/report.md >> "$GITHUB_STEP_SUMMARY"
+          cat evals/cost_sweep.md >> "$GITHUB_STEP_SUMMARY"

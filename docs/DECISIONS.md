@@ -108,9 +108,9 @@ the pre-dispute lane's advantage is a floor rather than a claim.
 
 ---
 
-## D5 · Open: the filing cost may be too small for Fight-or-Fold to matter
+## D5 · The filing cost may be too small for Fight-or-Fold to matter
 
-**24 Aug 2026 · unresolved, decision needed before day 6**
+**24 Aug 2026 · resolved same day, see D6**
 
 The first honest eval says Vakil **loses to always-fight** by ₹54,838 across 100
 cases, with 0 true negatives - the EV engine essentially never folds.
@@ -143,3 +143,86 @@ better story than a tuned constant.
 
 **Not doing:** quietly raising `VAKIL_REPRESENTMENT_COST` until the baseline
 comparison flips. That would be fitting the economics to the demo.
+
+---
+
+## D6 · Fight-or-Fold is worth exactly one thing, and it is not the headline
+
+**24 Aug 2026 · resolves D5 ·
+[`evals/cost_sweep.md`](../evals/cost_sweep.md)**
+
+Ran the sweep D5 called for: net realised recovery against filing cost across
+Rs 250-2,500 on the held-out split, plus a split by dispute size.
+
+### A methodology problem found first
+
+The initial sweep credited escalated cases with zero, the same as folds. That
+silently rewards abstention: raise the filing cost, expected values drift toward
+zero, verdict confidence drops, more cases escalate - and Vakil's "net" improves
+because the hard cases quietly leave the accounting. At Rs 2,000 it was
+escalating 66 of 100 and being scored on the 34 it kept.
+
+Every comparison is now reported at **both bounds**: optimistic (the human folds
+every escalated case) and pessimistic (the human fights them all). A win that
+holds only at the optimistic bound is a result about abstention, not about
+deciding well, and is labelled as such.
+
+### The answer
+
+| filing cost | uplift vs always-fight (opt) | (pess) |
+|---:|---:|---:|
+| Rs 250 | −Rs 54,838 | Rs 0 |
+| Rs 1,200 | −Rs 19,781 | +Rs 1,200 |
+| Rs 1,600 | −Rs 2,275 | +Rs 1,600 |
+| **Rs 2,000** | **+Rs 26,330** | **+Rs 12,000** |
+| Rs 2,500 | +Rs 62,331 | +Rs 22,404 |
+
+**Robust crossover: Rs 2,000.** It holds at both bounds, so it is not an
+abstention artefact.
+
+Split by dispute size at Rs 2,000, terciles of this corpus:
+
+| band | n | uplift (opt) | uplift (pess) | robust |
+|---|---:|---:|---:|:--:|
+| small (< Rs 4,999) | 26 | +Rs 16,616 | +Rs 12,000 | yes |
+| mid | 36 | +Rs 11,209 | Rs 0 | no |
+| large (> Rs 7,499) | 38 | −Rs 1,495 | Rs 0 | no |
+
+The small band is the whole effect. There, fighting everything is **outright
+loss-making** - always-fight nets −Rs 16,616, because a Rs 2,000 filing cost
+against a Rs 3,000 dispute cannot pay for itself at achievable win rates. Vakil
+folds all six it decides and nets zero, which is the correct answer.
+
+### What this changes
+
+Reading 2 in D5 was right, and more narrowly than expected.
+
+1. **The headline metric is no longer "net recovery vs both baselines."** That
+   comparison flatters or damns Vakil depending entirely on an assumed filing
+   cost, which is a parameter, not a result. The headline becomes: *here is the
+   regime in which deciding beats fighting everything, and here is its size.*
+   The sweep is the deliverable, not a single number pulled from it.
+2. **Small-ticket disputes are the product.** Which is a *better* story for the
+   Indian market than the one we started with - low-value COD and subscription
+   disputes are exactly where Indian merchants bleed, and exactly where no one
+   can justify an analyst's hour.
+3. **The corpus needs a heavier small-ticket tail.** Terciles of a corpus
+   spanning Rs 1,899-24,998 put the "small" band at under Rs 5,000, which is not
+   small. Real sub-Rs 1,000 disputes would sharpen this considerably, and their
+   absence currently understates the effect. Next corpus change.
+4. **Large disputes should just be fought.** No apology needed; the model says
+   so and the model is right. Vakil's value on those is the evidence pack and
+   the audit trail, not the verdict.
+
+### Open, carried forward
+
+The escalation rate at Rs 2,000 is 66%, which is too high to be useful - the
+0.35 confidence floor is scaled by dispute amount, so raising the filing cost
+pushes EV toward zero and floods the human queue. The floor should probably be
+absolute (rupees of EV margin) rather than proportional. Worth fixing on day 6
+alongside the model fit, because a system that abstains on two thirds of its
+inbox has not automated anything.
+
+**Not done:** raising `VAKIL_REPRESENTMENT_COST` to 200_000 so the README shows
+a win. The default stays at Rs 250 - the honest marginal cost of an automated
+filing - and the sweep reports what that implies.

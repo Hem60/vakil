@@ -50,8 +50,33 @@ not an abstract error; it has a price, and it is printed.
 - **always fold** — file nothing
 
 Beating only always-fold is meaningless; that baseline recovers zero by
-definition. **Beating always-fight is the claim that matters**, and at present
-Vakil does not. See D5 in [DECISIONS.md](DECISIONS.md).
+definition. **Beating always-fight is the claim that matters** — and whether
+Vakil does depends entirely on the filing cost, which is a parameter rather than
+a result. So there is no single headline number; there is a sweep. See below and
+D6 in [DECISIONS.md](DECISIONS.md).
+
+### 4b. Cost sensitivity, at both accounting bounds
+
+```bash
+make sweep     # -> evals/cost_sweep.md
+```
+
+Escalated cases go to a human, so their outcome is not Vakil's to claim. Crediting
+them with zero — the same as a fold — silently rewards abstention: raise the
+filing cost, expected values drift toward zero, confidence falls, more cases
+escalate, and the "net" improves because the hard cases leave the accounting.
+
+Every comparison is therefore reported at two bounds:
+
+| bound | assumes |
+|---|---|
+| optimistic | the human folds every escalated case (nets zero) |
+| pessimistic | the human fights every escalated case |
+
+A result that holds only at the optimistic bound is a result about **abstention**,
+not about deciding well, and is labelled as such. The robust crossover on the
+current corpus is **₹2,000**, and the effect is concentrated entirely in the
+small-dispute band.
 
 Accounting is deliberately conservative. A fight that wins recovers the disputed
 amount and pays the filing cost; a fight that loses pays the filing cost and
@@ -84,17 +109,25 @@ Listed here so they are found by a reader rather than by a panel.
    published representment win rates. Brier 0.259 with a worst-bin gap of 0.53
    is poor calibration, and it is the single biggest source of error in the
    money figures. Day 6.
-2. **Zero true negatives.** At the default ₹250 filing cost, fighting is
-   positive-EV for almost every case in the corpus, so the engine almost never
-   folds. This makes recall trivially 1.00 and precision equal to the corpus
-   base rate. The planned fix is a cost-sensitivity sweep rather than a tuned
-   constant — see D5.
-3. **Under-tested on 13.3.** Subjective quality disputes are close to
+2. **Zero true negatives at the default filing cost.** At ₹250, fighting is
+   positive-EV for almost every case, so the engine almost never folds — recall
+   is trivially 1.00 and precision equals the corpus base rate. The single-cost
+   confusion matrix is therefore close to uninformative on its own, and should
+   be read alongside the sweep rather than instead of it. Resolved as a
+   *measurement* question in D6; the model fit on day 6 is what will move it.
+3. **Escalation rate is too high to be useful at high filing costs** — 66% at
+   ₹2,000. The 0.35 confidence floor is proportional to the dispute amount, so
+   raising the filing cost pushes EV toward zero and floods the human queue. An
+   absolute floor (rupees of EV margin) is probably correct. A system that
+   abstains on two thirds of its inbox has not automated anything.
+4. **Under-tested on 13.3.** Subjective quality disputes are close to
    unwinnable with documents alone, and both the oracle and the model treat them
    as near-noise. Reported per reason code so it cannot hide in the average.
-4. **Corpus lacks a small-ticket tail**, which is precisely the regime where
-   Fight-or-Fold should pay. Documented in [DATA-CARD.md](DATA-CARD.md).
-5. **No end-to-end measurement of the model stages yet.** Extraction accuracy
+5. **Corpus lacks a small-ticket tail** — which D6 showed is precisely where the
+   entire Fight-or-Fold effect lives, so its absence understates the result.
+   Terciles of a ₹1,899-24,998 corpus put the "small" band under ₹5,000, which
+   is not small. Documented in [DATA-CARD.md](DATA-CARD.md).
+6. **No end-to-end measurement of the model stages yet.** Extraction accuracy
    and provenance-gate strip rate land on days 5 and 7 and are not in this
    report.
 
@@ -102,8 +135,10 @@ Listed here so they are found by a reader rather than by a panel.
 
 | | day |
 |---|---|
-| Cost-sensitivity sweep: net recovery vs filing cost, ₹250-2,500 | 6 |
+| ~~Cost-sensitivity sweep~~ — done, see D6 | 1 |
+| Absolute rather than proportional confidence floor | 6 |
 | Fitted + isotonic-calibrated win model, refit in CI | 6 |
+| Heavier small-ticket tail in the corpus, where the effect lives | 6 |
 | Provenance gate: claim strip rate, and a leakage check on stripped claims | 7 |
 | Extraction accuracy against fixture PODs with known ground truth | 5 |
 | Token and rupee cost per case | 9 |
