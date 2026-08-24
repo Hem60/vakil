@@ -16,6 +16,9 @@ node_modules/
 data/train/*.json
 data/test/*.json
 !data/test/MANIFEST.json
+# Rendered POD documents: 25 MB, regenerable from seed by `make fixtures`.
+# The manifest carries the ground truth and is committed.
+data/fixtures/pod/
 ledger.jsonl
 ledger.db
 *.log

@@ -1,0 +1,2114 @@
+{
+  "seed": 20260824,
+  "documents": 175,
+  "by_quality": {
+    "clean": 55,
+    "photo": 45,
+    "scanned": 75
+  },
+  "signed_fraction": 0.5257,
+  "generated_by": "data/generator/fixtures.py",
+  "note": "Synthetic delivery documents. No real courier or customer records.",
+  "entries": [
+    {
+      "case_id": "case_0001",
+      "document": "fixtures/pod/0001.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "XPR243669645",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-05-23",
+        "signed_by": null,
+        "delivered_to_address": "27 Lake Road, Chennai 287768"
+      }
+    },
+    {
+      "case_id": "case_0006",
+      "document": "fixtures/pod/0006.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "XPR365502544",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-06-30",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "58 Park Street, Bengaluru 284354"
+      }
+    },
+    {
+      "case_id": "case_0009",
+      "document": "fixtures/pod/0009.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "DEL624699712",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-06-25",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "39 Lake Road, Bengaluru 625209"
+      }
+    },
+    {
+      "case_id": "case_0014",
+      "document": "fixtures/pod/0014.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "EKA335441403",
+        "carrier": "Ekart",
+        "delivered_at": "2026-08-19",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "62 Residency Lane, Jaipur 347264"
+      }
+    },
+    {
+      "case_id": "case_0018",
+      "document": "fixtures/pod/0018.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "EKA894250784",
+        "carrier": "Ekart",
+        "delivered_at": "2026-05-27",
+        "signed_by": null,
+        "delivered_to_address": "79 Park Street, Hyderabad 785822"
+      }
+    },
+    {
+      "case_id": "case_0019",
+      "document": "fixtures/pod/0019.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "DEL773678472",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-06-10",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "24 Park Street, Pune 331244"
+      }
+    },
+    {
+      "case_id": "case_0035",
+      "document": "fixtures/pod/0035.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "SHA273453544",
+        "carrier": "Shadowfax",
+        "delivered_at": "2026-07-05",
+        "signed_by": null,
+        "delivered_to_address": "22 Hill View, Mumbai 601138"
+      }
+    },
+    {
+      "case_id": "case_0036",
+      "document": "fixtures/pod/0036.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "XPR879714465",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-06-25",
+        "signed_by": null,
+        "delivered_to_address": "27 Park Street, Kolkata 237701"
+      }
+    },
+    {
+      "case_id": "case_0043",
+      "document": "fixtures/pod/0043.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "XPR547726012",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-07-03",
+        "signed_by": null,
+        "delivered_to_address": "77 MG Road, Bengaluru 316509"
+      }
+    },
+    {
+      "case_id": "case_0044",
+      "document": "fixtures/pod/0044.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "EKA352760675",
+        "carrier": "Ekart",
+        "delivered_at": "2026-07-01",
+        "signed_by": null,
+        "delivered_to_address": "58 MG Road, Chennai 464190"
+      }
+    },
+    {
+      "case_id": "case_0047",
+      "document": "fixtures/pod/0047.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "XPR307168427",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-06-22",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "33 Park Street, Kolkata 315785"
+      }
+    },
+    {
+      "case_id": "case_0048",
+      "document": "fixtures/pod/0048.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "EKA417405569",
+        "carrier": "Ekart",
+        "delivered_at": "2026-07-02",
+        "signed_by": null,
+        "delivered_to_address": "13 Park Street, Mumbai 528415"
+      }
+    },
+    {
+      "case_id": "case_0051",
+      "document": "fixtures/pod/0051.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "SHA435271803",
+        "carrier": "Shadowfax",
+        "delivered_at": "2026-07-06",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "7 Hill View, Bengaluru 585749"
+      }
+    },
+    {
+      "case_id": "case_0060",
+      "document": "fixtures/pod/0060.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "BLU744298772",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-06-15",
+        "signed_by": null,
+        "delivered_to_address": "18 MG Road, Kolkata 166060"
+      }
+    },
+    {
+      "case_id": "case_0063",
+      "document": "fixtures/pod/0063.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "DEL168158025",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-06-03",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "93 MG Road, Pune 751746"
+      }
+    },
+    {
+      "case_id": "case_0066",
+      "document": "fixtures/pod/0066.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "XPR942447424",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-07-13",
+        "signed_by": null,
+        "delivered_to_address": "85 Park Street, Chennai 766777"
+      }
+    },
+    {
+      "case_id": "case_0072",
+      "document": "fixtures/pod/0072.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "EKA031930391",
+        "carrier": "Ekart",
+        "delivered_at": "2026-06-07",
+        "signed_by": "S. Iyer",
+        "delivered_to_address": "76 Residency Lane, Hyderabad 665917"
+      }
+    },
+    {
+      "case_id": "case_0076",
+      "document": "fixtures/pod/0076.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "SHA703932455",
+        "carrier": "Shadowfax",
+        "delivered_at": "2026-08-04",
+        "signed_by": null,
+        "delivered_to_address": "32 Lake Road, Jaipur 254779"
+      }
+    },
+    {
+      "case_id": "case_0077",
+      "document": "fixtures/pod/0077.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "DEL061931131",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-08-07",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "54 Park Street, Bengaluru 228604"
+      }
+    },
+    {
+      "case_id": "case_0082",
+      "document": "fixtures/pod/0082.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "XPR853267221",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-07-29",
+        "signed_by": null,
+        "delivered_to_address": "52 Hill View, Kolkata 320681"
+      }
+    },
+    {
+      "case_id": "case_0093",
+      "document": "fixtures/pod/0093.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "XPR326075002",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-07-31",
+        "signed_by": null,
+        "delivered_to_address": "85 Lake Road, Kolkata 111166"
+      }
+    },
+    {
+      "case_id": "case_0100",
+      "document": "fixtures/pod/0100.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "BLU534445160",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-06-18",
+        "signed_by": null,
+        "delivered_to_address": "44 Park Street, Mumbai 793061"
+      }
+    },
+    {
+      "case_id": "case_0102",
+      "document": "fixtures/pod/0102.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "EKA310887665",
+        "carrier": "Ekart",
+        "delivered_at": "2026-05-27",
+        "signed_by": null,
+        "delivered_to_address": "71 Park Street, Kolkata 313903"
+      }
+    },
+    {
+      "case_id": "case_0104",
+      "document": "fixtures/pod/0104.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "XPR035863896",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-07-17",
+        "signed_by": null,
+        "delivered_to_address": "83 Lake Road, Hyderabad 725896"
+      }
+    },
+    {
+      "case_id": "case_0107",
+      "document": "fixtures/pod/0107.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "DEL341571692",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-06-06",
+        "signed_by": null,
+        "delivered_to_address": "30 Park Street, Kolkata 542309"
+      }
+    },
+    {
+      "case_id": "case_0110",
+      "document": "fixtures/pod/0110.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "XPR102410868",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-07-27",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "17 Hill View, Jaipur 644305"
+      }
+    },
+    {
+      "case_id": "case_0112",
+      "document": "fixtures/pod/0112.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "DEL030052958",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-08-08",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "2 Hill View, Bengaluru 115077"
+      }
+    },
+    {
+      "case_id": "case_0120",
+      "document": "fixtures/pod/0120.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "XPR860922921",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-06-20",
+        "signed_by": null,
+        "delivered_to_address": "10 Hill View, Bengaluru 515138"
+      }
+    },
+    {
+      "case_id": "case_0141",
+      "document": "fixtures/pod/0141.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "EKA917048640",
+        "carrier": "Ekart",
+        "delivered_at": "2026-08-12",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "99 Hill View, Kolkata 479405"
+      }
+    },
+    {
+      "case_id": "case_0145",
+      "document": "fixtures/pod/0145.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "EKA122528773",
+        "carrier": "Ekart",
+        "delivered_at": "2026-06-14",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "30 Lake Road, Mumbai 435679"
+      }
+    },
+    {
+      "case_id": "case_0149",
+      "document": "fixtures/pod/0149.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "XPR287673700",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-07-27",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "71 Residency Lane, Chennai 399461"
+      }
+    },
+    {
+      "case_id": "case_0152",
+      "document": "fixtures/pod/0152.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "SHA220476193",
+        "carrier": "Shadowfax",
+        "delivered_at": "2026-06-06",
+        "signed_by": null,
+        "delivered_to_address": "1 Lake Road, Chennai 115984"
+      }
+    },
+    {
+      "case_id": "case_0161",
+      "document": "fixtures/pod/0161.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "EKA813174528",
+        "carrier": "Ekart",
+        "delivered_at": "2026-07-08",
+        "signed_by": "S. Iyer",
+        "delivered_to_address": "7 Lake Road, Chennai 616906"
+      }
+    },
+    {
+      "case_id": "case_0165",
+      "document": "fixtures/pod/0165.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "DEL124367283",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-05-28",
+        "signed_by": null,
+        "delivered_to_address": "79 Park Street, Jaipur 534663"
+      }
+    },
+    {
+      "case_id": "case_0185",
+      "document": "fixtures/pod/0185.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "SHA726367883",
+        "carrier": "Shadowfax",
+        "delivered_at": "2026-08-10",
+        "signed_by": null,
+        "delivered_to_address": "25 Lake Road, Jaipur 496047"
+      }
+    },
+    {
+      "case_id": "case_0187",
+      "document": "fixtures/pod/0187.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "DEL349477106",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-06-22",
+        "signed_by": null,
+        "delivered_to_address": "95 Lake Road, Kolkata 708973"
+      }
+    },
+    {
+      "case_id": "case_0189",
+      "document": "fixtures/pod/0189.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "SHA248554631",
+        "carrier": "Shadowfax",
+        "delivered_at": "2026-05-23",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "44 Residency Lane, Mumbai 305177"
+      }
+    },
+    {
+      "case_id": "case_0197",
+      "document": "fixtures/pod/0197.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "BLU759702779",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-07-12",
+        "signed_by": "S. Iyer",
+        "delivered_to_address": "40 Park Street, Jaipur 544666"
+      }
+    },
+    {
+      "case_id": "case_0200",
+      "document": "fixtures/pod/0200.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "BLU595591929",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-06-26",
+        "signed_by": null,
+        "delivered_to_address": "53 Residency Lane, Bengaluru 328434"
+      }
+    },
+    {
+      "case_id": "case_0202",
+      "document": "fixtures/pod/0202.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "BLU905910553",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-07-04",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "4 Lake Road, Pune 309173"
+      }
+    },
+    {
+      "case_id": "case_0205",
+      "document": "fixtures/pod/0205.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "XPR312707976",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-06-28",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "84 Lake Road, Pune 769278"
+      }
+    },
+    {
+      "case_id": "case_0215",
+      "document": "fixtures/pod/0215.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "SHA676264531",
+        "carrier": "Shadowfax",
+        "delivered_at": "2026-07-13",
+        "signed_by": "S. Iyer",
+        "delivered_to_address": "51 MG Road, Bengaluru 142508"
+      }
+    },
+    {
+      "case_id": "case_0220",
+      "document": "fixtures/pod/0220.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "DEL906065131",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-08-13",
+        "signed_by": "S. Iyer",
+        "delivered_to_address": "53 Park Street, Chennai 479162"
+      }
+    },
+    {
+      "case_id": "case_0224",
+      "document": "fixtures/pod/0224.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "EKA1023644446",
+        "carrier": "Ekart",
+        "delivered_at": "2026-05-31",
+        "signed_by": null,
+        "delivered_to_address": "98 Lake Road, Pune 581899"
+      }
+    },
+    {
+      "case_id": "case_0227",
+      "document": "fixtures/pod/0227.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "EKA432892391",
+        "carrier": "Ekart",
+        "delivered_at": "2026-06-24",
+        "signed_by": null,
+        "delivered_to_address": "54 Residency Lane, Hyderabad 687849"
+      }
+    },
+    {
+      "case_id": "case_0230",
+      "document": "fixtures/pod/0230.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "XPR564880132",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-07-03",
+        "signed_by": null,
+        "delivered_to_address": "33 MG Road, Kolkata 676237"
+      }
+    },
+    {
+      "case_id": "case_0232",
+      "document": "fixtures/pod/0232.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "DEL039876216",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-07-31",
+        "signed_by": null,
+        "delivered_to_address": "30 MG Road, Pune 265616"
+      }
+    },
+    {
+      "case_id": "case_0263",
+      "document": "fixtures/pod/0263.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "SHA141962038",
+        "carrier": "Shadowfax",
+        "delivered_at": "2026-08-02",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "56 Lake Road, Mumbai 511601"
+      }
+    },
+    {
+      "case_id": "case_0268",
+      "document": "fixtures/pod/0268.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "BLU712168254",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-07-18",
+        "signed_by": "S. Iyer",
+        "delivered_to_address": "92 Hill View, Hyderabad 211479"
+      }
+    },
+    {
+      "case_id": "case_0272",
+      "document": "fixtures/pod/0272.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "DEL465473882",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-06-06",
+        "signed_by": null,
+        "delivered_to_address": "89 MG Road, Kolkata 680984"
+      }
+    },
+    {
+      "case_id": "case_0273",
+      "document": "fixtures/pod/0273.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "EKA499311323",
+        "carrier": "Ekart",
+        "delivered_at": "2026-07-14",
+        "signed_by": null,
+        "delivered_to_address": "12 Residency Lane, Pune 650446"
+      }
+    },
+    {
+      "case_id": "case_0276",
+      "document": "fixtures/pod/0276.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "DEL286182066",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-07-04",
+        "signed_by": null,
+        "delivered_to_address": "22 Residency Lane, Hyderabad 401050"
+      }
+    },
+    {
+      "case_id": "case_0285",
+      "document": "fixtures/pod/0285.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "SHA157116114",
+        "carrier": "Shadowfax",
+        "delivered_at": "2026-07-09",
+        "signed_by": null,
+        "delivered_to_address": "72 Lake Road, Pune 329976"
+      }
+    },
+    {
+      "case_id": "case_0002",
+      "document": "fixtures/pod/0002.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "BLU705252187",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-07-25",
+        "signed_by": "S. Iyer",
+        "delivered_to_address": "1 Hill View, Bengaluru 604575"
+      }
+    },
+    {
+      "case_id": "case_0004",
+      "document": "fixtures/pod/0004.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "BLU872122525",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-06-26",
+        "signed_by": null,
+        "delivered_to_address": "41 Lake Road, Hyderabad 684561"
+      }
+    },
+    {
+      "case_id": "case_0005",
+      "document": "fixtures/pod/0005.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "SHA738398347",
+        "carrier": "Shadowfax",
+        "delivered_at": "2026-07-08",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "45 Residency Lane, Hyderabad 357016"
+      }
+    },
+    {
+      "case_id": "case_0011",
+      "document": "fixtures/pod/0011.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "EKA474286333",
+        "carrier": "Ekart",
+        "delivered_at": "2026-08-06",
+        "signed_by": "S. Iyer",
+        "delivered_to_address": "1 Residency Lane, Kolkata 587568"
+      }
+    },
+    {
+      "case_id": "case_0013",
+      "document": "fixtures/pod/0013.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "BLU801689099",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-06-26",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "98 Lake Road, Chennai 741935"
+      }
+    },
+    {
+      "case_id": "case_0022",
+      "document": "fixtures/pod/0022.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "BLU372400338",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-07-12",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "4 MG Road, Bengaluru 134917"
+      }
+    },
+    {
+      "case_id": "case_0024",
+      "document": "fixtures/pod/0024.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "DEL341440262",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-06-03",
+        "signed_by": null,
+        "delivered_to_address": "55 MG Road, Bengaluru 707075"
+      }
+    },
+    {
+      "case_id": "case_0026",
+      "document": "fixtures/pod/0026.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "EKA247541700",
+        "carrier": "Ekart",
+        "delivered_at": "2026-06-08",
+        "signed_by": null,
+        "delivered_to_address": "27 Hill View, Chennai 226367"
+      }
+    },
+    {
+      "case_id": "case_0029",
+      "document": "fixtures/pod/0029.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "BLU280273119",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-08-05",
+        "signed_by": null,
+        "delivered_to_address": "26 Park Street, Chennai 717404"
+      }
+    },
+    {
+      "case_id": "case_0032",
+      "document": "fixtures/pod/0032.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "SHA467612906",
+        "carrier": "Shadowfax",
+        "delivered_at": "2026-06-01",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "94 Park Street, Bengaluru 304503"
+      }
+    },
+    {
+      "case_id": "case_0033",
+      "document": "fixtures/pod/0033.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "SHA933580259",
+        "carrier": "Shadowfax",
+        "delivered_at": "2026-06-16",
+        "signed_by": null,
+        "delivered_to_address": "62 Park Street, Bengaluru 445637"
+      }
+    },
+    {
+      "case_id": "case_0034",
+      "document": "fixtures/pod/0034.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "SHA745236523",
+        "carrier": "Shadowfax",
+        "delivered_at": "2026-06-06",
+        "signed_by": null,
+        "delivered_to_address": "92 MG Road, Jaipur 270280"
+      }
+    },
+    {
+      "case_id": "case_0039",
+      "document": "fixtures/pod/0039.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "XPR106658504",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-07-27",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "14 Park Street, Kolkata 749979"
+      }
+    },
+    {
+      "case_id": "case_0053",
+      "document": "fixtures/pod/0053.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "XPR367317177",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-06-15",
+        "signed_by": null,
+        "delivered_to_address": "26 Lake Road, Kolkata 278989"
+      }
+    },
+    {
+      "case_id": "case_0064",
+      "document": "fixtures/pod/0064.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "XPR947369677",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-07-12",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "60 MG Road, Bengaluru 586803"
+      }
+    },
+    {
+      "case_id": "case_0067",
+      "document": "fixtures/pod/0067.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "BLU260608997",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-08-16",
+        "signed_by": null,
+        "delivered_to_address": "45 Park Street, Hyderabad 688349"
+      }
+    },
+    {
+      "case_id": "case_0069",
+      "document": "fixtures/pod/0069.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "EKA546937777",
+        "carrier": "Ekart",
+        "delivered_at": "2026-07-10",
+        "signed_by": null,
+        "delivered_to_address": "44 Hill View, Jaipur 124934"
+      }
+    },
+    {
+      "case_id": "case_0070",
+      "document": "fixtures/pod/0070.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "SHA263478914",
+        "carrier": "Shadowfax",
+        "delivered_at": "2026-08-04",
+        "signed_by": "S. Iyer",
+        "delivered_to_address": "45 Lake Road, Hyderabad 647156"
+      }
+    },
+    {
+      "case_id": "case_0071",
+      "document": "fixtures/pod/0071.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "SHA981501136",
+        "carrier": "Shadowfax",
+        "delivered_at": "2026-07-30",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "80 Residency Lane, Mumbai 643024"
+      }
+    },
+    {
+      "case_id": "case_0084",
+      "document": "fixtures/pod/0084.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "EKA727406055",
+        "carrier": "Ekart",
+        "delivered_at": "2026-07-03",
+        "signed_by": null,
+        "delivered_to_address": "48 Hill View, Kolkata 244747"
+      }
+    },
+    {
+      "case_id": "case_0086",
+      "document": "fixtures/pod/0086.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "DEL913044745",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-06-01",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "59 Hill View, Kolkata 347696"
+      }
+    },
+    {
+      "case_id": "case_0087",
+      "document": "fixtures/pod/0087.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "DEL229775545",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-06-26",
+        "signed_by": "S. Iyer",
+        "delivered_to_address": "90 Lake Road, Kolkata 765601"
+      }
+    },
+    {
+      "case_id": "case_0089",
+      "document": "fixtures/pod/0089.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "BLU005204327",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-08-01",
+        "signed_by": null,
+        "delivered_to_address": "64 MG Road, Pune 449997"
+      }
+    },
+    {
+      "case_id": "case_0090",
+      "document": "fixtures/pod/0090.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "XPR173950637",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-08-08",
+        "signed_by": null,
+        "delivered_to_address": "54 Hill View, Kolkata 609907"
+      }
+    },
+    {
+      "case_id": "case_0091",
+      "document": "fixtures/pod/0091.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "DEL739868094",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-05-22",
+        "signed_by": null,
+        "delivered_to_address": "53 Park Street, Bengaluru 122355"
+      }
+    },
+    {
+      "case_id": "case_0094",
+      "document": "fixtures/pod/0094.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "EKA639685758",
+        "carrier": "Ekart",
+        "delivered_at": "2026-07-16",
+        "signed_by": null,
+        "delivered_to_address": "15 Residency Lane, Mumbai 538532"
+      }
+    },
+    {
+      "case_id": "case_0095",
+      "document": "fixtures/pod/0095.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "DEL763333578",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-07-04",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "49 MG Road, Kolkata 208302"
+      }
+    },
+    {
+      "case_id": "case_0097",
+      "document": "fixtures/pod/0097.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "BLU538870954",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-06-04",
+        "signed_by": null,
+        "delivered_to_address": "98 Residency Lane, Jaipur 486428"
+      }
+    },
+    {
+      "case_id": "case_0101",
+      "document": "fixtures/pod/0101.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "EKA449293025",
+        "carrier": "Ekart",
+        "delivered_at": "2026-06-14",
+        "signed_by": null,
+        "delivered_to_address": "85 Residency Lane, Hyderabad 473443"
+      }
+    },
+    {
+      "case_id": "case_0103",
+      "document": "fixtures/pod/0103.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "XPR569053456",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-06-12",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "84 MG Road, Jaipur 733706"
+      }
+    },
+    {
+      "case_id": "case_0105",
+      "document": "fixtures/pod/0105.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "EKA167507859",
+        "carrier": "Ekart",
+        "delivered_at": "2026-08-14",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "11 Residency Lane, Jaipur 485612"
+      }
+    },
+    {
+      "case_id": "case_0106",
+      "document": "fixtures/pod/0106.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "SHA976405440",
+        "carrier": "Shadowfax",
+        "delivered_at": "2026-08-14",
+        "signed_by": null,
+        "delivered_to_address": "22 Lake Road, Chennai 202193"
+      }
+    },
+    {
+      "case_id": "case_0111",
+      "document": "fixtures/pod/0111.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "BLU977265880",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-05-26",
+        "signed_by": null,
+        "delivered_to_address": "76 Park Street, Chennai 224857"
+      }
+    },
+    {
+      "case_id": "case_0115",
+      "document": "fixtures/pod/0115.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "EKA248360799",
+        "carrier": "Ekart",
+        "delivered_at": "2026-05-31",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "90 Hill View, Kolkata 318521"
+      }
+    },
+    {
+      "case_id": "case_0116",
+      "document": "fixtures/pod/0116.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "SHA553570192",
+        "carrier": "Shadowfax",
+        "delivered_at": "2026-07-19",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "74 MG Road, Jaipur 609052"
+      }
+    },
+    {
+      "case_id": "case_0117",
+      "document": "fixtures/pod/0117.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "DEL358961570",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-08-01",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "5 Lake Road, Bengaluru 587822"
+      }
+    },
+    {
+      "case_id": "case_0119",
+      "document": "fixtures/pod/0119.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "DEL876597862",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-05-30",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "46 MG Road, Hyderabad 755104"
+      }
+    },
+    {
+      "case_id": "case_0123",
+      "document": "fixtures/pod/0123.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "BLU456978523",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-08-07",
+        "signed_by": "S. Iyer",
+        "delivered_to_address": "76 Residency Lane, Jaipur 493244"
+      }
+    },
+    {
+      "case_id": "case_0124",
+      "document": "fixtures/pod/0124.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "BLU384140114",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-08-23",
+        "signed_by": null,
+        "delivered_to_address": "46 Hill View, Hyderabad 159950"
+      }
+    },
+    {
+      "case_id": "case_0128",
+      "document": "fixtures/pod/0128.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "SHA484383562",
+        "carrier": "Shadowfax",
+        "delivered_at": "2026-07-25",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "67 Lake Road, Hyderabad 699281"
+      }
+    },
+    {
+      "case_id": "case_0132",
+      "document": "fixtures/pod/0132.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "DEL238666109",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-07-15",
+        "signed_by": null,
+        "delivered_to_address": "25 Park Street, Jaipur 168459"
+      }
+    },
+    {
+      "case_id": "case_0134",
+      "document": "fixtures/pod/0134.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "EKA702162664",
+        "carrier": "Ekart",
+        "delivered_at": "2026-06-05",
+        "signed_by": null,
+        "delivered_to_address": "38 Residency Lane, Chennai 405111"
+      }
+    },
+    {
+      "case_id": "case_0137",
+      "document": "fixtures/pod/0137.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "BLU444521468",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-07-10",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "14 Lake Road, Kolkata 296941"
+      }
+    },
+    {
+      "case_id": "case_0138",
+      "document": "fixtures/pod/0138.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "BLU926473406",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-08-12",
+        "signed_by": "S. Iyer",
+        "delivered_to_address": "26 Residency Lane, Mumbai 261483"
+      }
+    },
+    {
+      "case_id": "case_0140",
+      "document": "fixtures/pod/0140.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "EKA570463629",
+        "carrier": "Ekart",
+        "delivered_at": "2026-06-22",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "8 Hill View, Bengaluru 344940"
+      }
+    },
+    {
+      "case_id": "case_0142",
+      "document": "fixtures/pod/0142.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "BLU917163711",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-06-12",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "38 Lake Road, Pune 247383"
+      }
+    },
+    {
+      "case_id": "case_0143",
+      "document": "fixtures/pod/0143.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "XPR448126305",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-08-09",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "87 MG Road, Jaipur 440910"
+      }
+    },
+    {
+      "case_id": "case_0144",
+      "document": "fixtures/pod/0144.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "EKA795355331",
+        "carrier": "Ekart",
+        "delivered_at": "2026-07-22",
+        "signed_by": null,
+        "delivered_to_address": "60 Residency Lane, Pune 535888"
+      }
+    },
+    {
+      "case_id": "case_0146",
+      "document": "fixtures/pod/0146.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "SHA108164220",
+        "carrier": "Shadowfax",
+        "delivered_at": "2026-07-07",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "12 Residency Lane, Hyderabad 788704"
+      }
+    },
+    {
+      "case_id": "case_0147",
+      "document": "fixtures/pod/0147.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "DEL503390519",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-06-14",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "94 Hill View, Bengaluru 245943"
+      }
+    },
+    {
+      "case_id": "case_0148",
+      "document": "fixtures/pod/0148.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "XPR241772574",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-08-01",
+        "signed_by": "S. Iyer",
+        "delivered_to_address": "15 Lake Road, Pune 361948"
+      }
+    },
+    {
+      "case_id": "case_0150",
+      "document": "fixtures/pod/0150.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "SHA244848335",
+        "carrier": "Shadowfax",
+        "delivered_at": "2026-07-10",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "27 Park Street, Chennai 213410"
+      }
+    },
+    {
+      "case_id": "case_0151",
+      "document": "fixtures/pod/0151.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "EKA729312407",
+        "carrier": "Ekart",
+        "delivered_at": "2026-07-23",
+        "signed_by": null,
+        "delivered_to_address": "80 Residency Lane, Jaipur 421342"
+      }
+    },
+    {
+      "case_id": "case_0154",
+      "document": "fixtures/pod/0154.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "DEL161719575",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-06-09",
+        "signed_by": null,
+        "delivered_to_address": "45 MG Road, Mumbai 539844"
+      }
+    },
+    {
+      "case_id": "case_0157",
+      "document": "fixtures/pod/0157.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "BLU601435482",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-07-25",
+        "signed_by": null,
+        "delivered_to_address": "6 Lake Road, Pune 185574"
+      }
+    },
+    {
+      "case_id": "case_0162",
+      "document": "fixtures/pod/0162.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "DEL010200826",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-08-09",
+        "signed_by": "S. Iyer",
+        "delivered_to_address": "91 Park Street, Chennai 591874"
+      }
+    },
+    {
+      "case_id": "case_0163",
+      "document": "fixtures/pod/0163.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "EKA368076960",
+        "carrier": "Ekart",
+        "delivered_at": "2026-07-15",
+        "signed_by": "S. Iyer",
+        "delivered_to_address": "71 Residency Lane, Bengaluru 338002"
+      }
+    },
+    {
+      "case_id": "case_0164",
+      "document": "fixtures/pod/0164.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "BLU460267370",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-07-22",
+        "signed_by": null,
+        "delivered_to_address": "83 Residency Lane, Chennai 425153"
+      }
+    },
+    {
+      "case_id": "case_0167",
+      "document": "fixtures/pod/0167.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "XPR906026550",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-07-25",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "83 Residency Lane, Kolkata 622016"
+      }
+    },
+    {
+      "case_id": "case_0168",
+      "document": "fixtures/pod/0168.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "DEL1025052772",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-08-14",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "67 Lake Road, Kolkata 465488"
+      }
+    },
+    {
+      "case_id": "case_0169",
+      "document": "fixtures/pod/0169.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "DEL031083155",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-07-25",
+        "signed_by": null,
+        "delivered_to_address": "79 MG Road, Mumbai 343048"
+      }
+    },
+    {
+      "case_id": "case_0172",
+      "document": "fixtures/pod/0172.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "DEL914040818",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-07-07",
+        "signed_by": "S. Iyer",
+        "delivered_to_address": "95 MG Road, Pune 477113"
+      }
+    },
+    {
+      "case_id": "case_0173",
+      "document": "fixtures/pod/0173.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "XPR978825934",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-08-05",
+        "signed_by": null,
+        "delivered_to_address": "82 Park Street, Bengaluru 474958"
+      }
+    },
+    {
+      "case_id": "case_0174",
+      "document": "fixtures/pod/0174.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "SHA247807778",
+        "carrier": "Shadowfax",
+        "delivered_at": "2026-07-26",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "9 MG Road, Chennai 448170"
+      }
+    },
+    {
+      "case_id": "case_0175",
+      "document": "fixtures/pod/0175.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "DEL030158142",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-06-19",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "16 Lake Road, Bengaluru 408481"
+      }
+    },
+    {
+      "case_id": "case_0176",
+      "document": "fixtures/pod/0176.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "XPR277771158",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-06-03",
+        "signed_by": null,
+        "delivered_to_address": "28 Park Street, Bengaluru 388722"
+      }
+    },
+    {
+      "case_id": "case_0177",
+      "document": "fixtures/pod/0177.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "EKA977567574",
+        "carrier": "Ekart",
+        "delivered_at": "2026-06-19",
+        "signed_by": "S. Iyer",
+        "delivered_to_address": "39 Residency Lane, Bengaluru 386089"
+      }
+    },
+    {
+      "case_id": "case_0178",
+      "document": "fixtures/pod/0178.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "XPR559014823",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-08-04",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "63 Lake Road, Hyderabad 615113"
+      }
+    },
+    {
+      "case_id": "case_0181",
+      "document": "fixtures/pod/0181.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "EKA111081236",
+        "carrier": "Ekart",
+        "delivered_at": "2026-07-28",
+        "signed_by": "S. Iyer",
+        "delivered_to_address": "61 Residency Lane, Mumbai 526514"
+      }
+    },
+    {
+      "case_id": "case_0182",
+      "document": "fixtures/pod/0182.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "SHA1037771608",
+        "carrier": "Shadowfax",
+        "delivered_at": "2026-07-20",
+        "signed_by": null,
+        "delivered_to_address": "8 MG Road, Chennai 643340"
+      }
+    },
+    {
+      "case_id": "case_0184",
+      "document": "fixtures/pod/0184.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "DEL888878369",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-07-31",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "2 Park Street, Chennai 618883"
+      }
+    },
+    {
+      "case_id": "case_0188",
+      "document": "fixtures/pod/0188.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "BLU456993510",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-08-08",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "86 Hill View, Chennai 768401"
+      }
+    },
+    {
+      "case_id": "case_0191",
+      "document": "fixtures/pod/0191.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "BLU629747831",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-08-04",
+        "signed_by": null,
+        "delivered_to_address": "61 Hill View, Kolkata 549367"
+      }
+    },
+    {
+      "case_id": "case_0192",
+      "document": "fixtures/pod/0192.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "XPR145242871",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-07-31",
+        "signed_by": "S. Iyer",
+        "delivered_to_address": "44 Residency Lane, Mumbai 127851"
+      }
+    },
+    {
+      "case_id": "case_0193",
+      "document": "fixtures/pod/0193.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "XPR708833409",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-08-05",
+        "signed_by": null,
+        "delivered_to_address": "92 Lake Road, Pune 258166"
+      }
+    },
+    {
+      "case_id": "case_0194",
+      "document": "fixtures/pod/0194.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "XPR964948084",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-08-02",
+        "signed_by": null,
+        "delivered_to_address": "32 MG Road, Mumbai 653920"
+      }
+    },
+    {
+      "case_id": "case_0196",
+      "document": "fixtures/pod/0196.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "BLU811183299",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-07-11",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "58 Hill View, Hyderabad 789401"
+      }
+    },
+    {
+      "case_id": "case_0208",
+      "document": "fixtures/pod/0208.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "BLU660908408",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-07-01",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "16 Residency Lane, Mumbai 564880"
+      }
+    },
+    {
+      "case_id": "case_0209",
+      "document": "fixtures/pod/0209.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "EKA216261897",
+        "carrier": "Ekart",
+        "delivered_at": "2026-08-19",
+        "signed_by": "S. Iyer",
+        "delivered_to_address": "79 Lake Road, Hyderabad 571369"
+      }
+    },
+    {
+      "case_id": "case_0210",
+      "document": "fixtures/pod/0210.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "SHA128312080",
+        "carrier": "Shadowfax",
+        "delivered_at": "2026-08-02",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "5 Lake Road, Bengaluru 736564"
+      }
+    },
+    {
+      "case_id": "case_0212",
+      "document": "fixtures/pod/0212.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "XPR553773479",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-07-17",
+        "signed_by": null,
+        "delivered_to_address": "83 Hill View, Chennai 786892"
+      }
+    },
+    {
+      "case_id": "case_0214",
+      "document": "fixtures/pod/0214.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "BLU669285878",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-08-10",
+        "signed_by": null,
+        "delivered_to_address": "34 Park Street, Jaipur 764791"
+      }
+    },
+    {
+      "case_id": "case_0216",
+      "document": "fixtures/pod/0216.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "DEL725913762",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-08-08",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "37 MG Road, Kolkata 277596"
+      }
+    },
+    {
+      "case_id": "case_0217",
+      "document": "fixtures/pod/0217.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "DEL863520614",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-07-29",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "19 Park Street, Bengaluru 215269"
+      }
+    },
+    {
+      "case_id": "case_0218",
+      "document": "fixtures/pod/0218.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "EKA559053880",
+        "carrier": "Ekart",
+        "delivered_at": "2026-08-15",
+        "signed_by": null,
+        "delivered_to_address": "29 Lake Road, Chennai 272995"
+      }
+    },
+    {
+      "case_id": "case_0219",
+      "document": "fixtures/pod/0219.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "SHA566585189",
+        "carrier": "Shadowfax",
+        "delivered_at": "2026-06-15",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "10 MG Road, Chennai 119896"
+      }
+    },
+    {
+      "case_id": "case_0221",
+      "document": "fixtures/pod/0221.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "SHA590739805",
+        "carrier": "Shadowfax",
+        "delivered_at": "2026-06-16",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "84 Lake Road, Chennai 381482"
+      }
+    },
+    {
+      "case_id": "case_0223",
+      "document": "fixtures/pod/0223.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "XPR1049328797",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-07-09",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "45 Lake Road, Mumbai 152658"
+      }
+    },
+    {
+      "case_id": "case_0225",
+      "document": "fixtures/pod/0225.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "EKA236120227",
+        "carrier": "Ekart",
+        "delivered_at": "2026-08-04",
+        "signed_by": null,
+        "delivered_to_address": "98 Lake Road, Pune 239688"
+      }
+    },
+    {
+      "case_id": "case_0228",
+      "document": "fixtures/pod/0228.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "EKA762232246",
+        "carrier": "Ekart",
+        "delivered_at": "2026-07-18",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "58 Lake Road, Bengaluru 506394"
+      }
+    },
+    {
+      "case_id": "case_0229",
+      "document": "fixtures/pod/0229.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "EKA646269150",
+        "carrier": "Ekart",
+        "delivered_at": "2026-08-05",
+        "signed_by": null,
+        "delivered_to_address": "99 Park Street, Pune 698478"
+      }
+    },
+    {
+      "case_id": "case_0231",
+      "document": "fixtures/pod/0231.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "BLU340480266",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-06-20",
+        "signed_by": null,
+        "delivered_to_address": "90 Residency Lane, Mumbai 479488"
+      }
+    },
+    {
+      "case_id": "case_0238",
+      "document": "fixtures/pod/0238.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "XPR884713585",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-07-19",
+        "signed_by": null,
+        "delivered_to_address": "54 Residency Lane, Bengaluru 340393"
+      }
+    },
+    {
+      "case_id": "case_0239",
+      "document": "fixtures/pod/0239.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "EKA212140381",
+        "carrier": "Ekart",
+        "delivered_at": "2026-06-04",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "92 Hill View, Bengaluru 635221"
+      }
+    },
+    {
+      "case_id": "case_0240",
+      "document": "fixtures/pod/0240.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "DEL476770882",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-06-28",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "95 Residency Lane, Jaipur 252221"
+      }
+    },
+    {
+      "case_id": "case_0241",
+      "document": "fixtures/pod/0241.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "DEL191620900",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-05-27",
+        "signed_by": null,
+        "delivered_to_address": "55 Residency Lane, Hyderabad 350181"
+      }
+    },
+    {
+      "case_id": "case_0242",
+      "document": "fixtures/pod/0242.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "SHA550206530",
+        "carrier": "Shadowfax",
+        "delivered_at": "2026-08-04",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "60 MG Road, Bengaluru 686522"
+      }
+    },
+    {
+      "case_id": "case_0243",
+      "document": "fixtures/pod/0243.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "XPR926802478",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-06-10",
+        "signed_by": null,
+        "delivered_to_address": "29 Hill View, Hyderabad 301365"
+      }
+    },
+    {
+      "case_id": "case_0246",
+      "document": "fixtures/pod/0246.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "EKA623968106",
+        "carrier": "Ekart",
+        "delivered_at": "2026-07-19",
+        "signed_by": "S. Iyer",
+        "delivered_to_address": "86 Residency Lane, Bengaluru 417270"
+      }
+    },
+    {
+      "case_id": "case_0249",
+      "document": "fixtures/pod/0249.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "EKA872859192",
+        "carrier": "Ekart",
+        "delivered_at": "2026-06-17",
+        "signed_by": null,
+        "delivered_to_address": "79 MG Road, Chennai 475971"
+      }
+    },
+    {
+      "case_id": "case_0250",
+      "document": "fixtures/pod/0250.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "XPR168068823",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-07-15",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "71 Lake Road, Kolkata 195152"
+      }
+    },
+    {
+      "case_id": "case_0251",
+      "document": "fixtures/pod/0251.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "EKA158238862",
+        "carrier": "Ekart",
+        "delivered_at": "2026-06-07",
+        "signed_by": null,
+        "delivered_to_address": "91 Lake Road, Bengaluru 647016"
+      }
+    },
+    {
+      "case_id": "case_0252",
+      "document": "fixtures/pod/0252.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "BLU813572251",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-07-04",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "73 Park Street, Kolkata 271219"
+      }
+    },
+    {
+      "case_id": "case_0254",
+      "document": "fixtures/pod/0254.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "XPR419398133",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-06-28",
+        "signed_by": "S. Iyer",
+        "delivered_to_address": "96 Residency Lane, Hyderabad 399994"
+      }
+    },
+    {
+      "case_id": "case_0255",
+      "document": "fixtures/pod/0255.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "BLU756319909",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-06-17",
+        "signed_by": null,
+        "delivered_to_address": "82 Hill View, Mumbai 345881"
+      }
+    },
+    {
+      "case_id": "case_0256",
+      "document": "fixtures/pod/0256.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "BLU478764787",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-07-30",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "9 Lake Road, Bengaluru 191394"
+      }
+    },
+    {
+      "case_id": "case_0257",
+      "document": "fixtures/pod/0257.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "EKA394392173",
+        "carrier": "Ekart",
+        "delivered_at": "2026-08-13",
+        "signed_by": null,
+        "delivered_to_address": "71 Hill View, Chennai 550905"
+      }
+    },
+    {
+      "case_id": "case_0259",
+      "document": "fixtures/pod/0259.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "EKA494861009",
+        "carrier": "Ekart",
+        "delivered_at": "2026-06-17",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "82 Park Street, Jaipur 696138"
+      }
+    },
+    {
+      "case_id": "case_0262",
+      "document": "fixtures/pod/0262.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "DEL672745257",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-07-12",
+        "signed_by": null,
+        "delivered_to_address": "20 Park Street, Chennai 690936"
+      }
+    },
+    {
+      "case_id": "case_0266",
+      "document": "fixtures/pod/0266.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "DEL830047594",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-06-27",
+        "signed_by": "S. Iyer",
+        "delivered_to_address": "48 Residency Lane, Hyderabad 145321"
+      }
+    },
+    {
+      "case_id": "case_0269",
+      "document": "fixtures/pod/0269.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "DEL458239025",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-07-07",
+        "signed_by": null,
+        "delivered_to_address": "89 Hill View, Bengaluru 285150"
+      }
+    },
+    {
+      "case_id": "case_0277",
+      "document": "fixtures/pod/0277.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "XPR957427264",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-07-20",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "57 Park Street, Hyderabad 321533"
+      }
+    },
+    {
+      "case_id": "case_0278",
+      "document": "fixtures/pod/0278.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "SHA429165729",
+        "carrier": "Shadowfax",
+        "delivered_at": "2026-05-29",
+        "signed_by": null,
+        "delivered_to_address": "37 MG Road, Pune 666787"
+      }
+    },
+    {
+      "case_id": "case_0280",
+      "document": "fixtures/pod/0280.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "XPR536532855",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-08-15",
+        "signed_by": null,
+        "delivered_to_address": "44 Residency Lane, Kolkata 787042"
+      }
+    },
+    {
+      "case_id": "case_0283",
+      "document": "fixtures/pod/0283.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "BLU792308175",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-06-05",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "60 Residency Lane, Chennai 395457"
+      }
+    },
+    {
+      "case_id": "case_0287",
+      "document": "fixtures/pod/0287.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "BLU316688902",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-08-06",
+        "signed_by": "R. Kumar",
+        "delivered_to_address": "82 Hill View, Mumbai 152958"
+      }
+    },
+    {
+      "case_id": "case_0288",
+      "document": "fixtures/pod/0288.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "BLU1018677997",
+        "carrier": "Bluedart",
+        "delivered_at": "2026-06-16",
+        "signed_by": null,
+        "delivered_to_address": "76 Residency Lane, Mumbai 705804"
+      }
+    },
+    {
+      "case_id": "case_0291",
+      "document": "fixtures/pod/0291.pdf",
+      "quality": "photo",
+      "expected": {
+        "tracking_id": "XPR833668681",
+        "carrier": "XpressBees",
+        "delivered_at": "2026-08-02",
+        "signed_by": "A. Sharma",
+        "delivered_to_address": "79 Hill View, Kolkata 319607"
+      }
+    },
+    {
+      "case_id": "case_0292",
+      "document": "fixtures/pod/0292.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "EKA324277036",
+        "carrier": "Ekart",
+        "delivered_at": "2026-07-07",
+        "signed_by": null,
+        "delivered_to_address": "37 Hill View, Bengaluru 322317"
+      }
+    },
+    {
+      "case_id": "case_0293",
+      "document": "fixtures/pod/0293.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "DEL809457071",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-07-12",
+        "signed_by": null,
+        "delivered_to_address": "49 MG Road, Mumbai 260899"
+      }
+    },
+    {
+      "case_id": "case_0296",
+      "document": "fixtures/pod/0296.pdf",
+      "quality": "scanned",
+      "expected": {
+        "tracking_id": "SHA1019260588",
+        "carrier": "Shadowfax",
+        "delivered_at": "2026-08-04",
+        "signed_by": "S. Iyer",
+        "delivered_to_address": "75 MG Road, Mumbai 311799"
+      }
+    },
+    {
+      "case_id": "case_0297",
+      "document": "fixtures/pod/0297.pdf",
+      "quality": "clean",
+      "expected": {
+        "tracking_id": "DEL452816135",
+        "carrier": "Delhivery",
+        "delivered_at": "2026-07-28",
+        "signed_by": "S. Iyer",
+        "delivered_to_address": "19 Hill View, Bengaluru 323438"
+      }
+    }
+  ]
+}

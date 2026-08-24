@@ -34,6 +34,9 @@ jobs:
       - name: Regenerate corpus
         run: python data/generator/generate.py --seed 20260824 --n 300
 
+      - name: Render POD fixtures
+        run: python data/generator/fixtures.py --seed 20260824
+
       - name: Assert the held-out split has not drifted
         # The manifest hash pins the test set. If a generator change alters it,
         # every earlier eval report becomes incomparable, and that must be a

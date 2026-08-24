@@ -2,11 +2,12 @@ PY ?= .venv/Scripts/python.exe
 SEED ?= 20260824
 N ?= 300
 
-.PHONY: help install data eval sweep test lint demo verify rules clean up down
+.PHONY: help install data fixtures eval sweep test lint demo verify rules clean up down
 
 help:
 	@echo "make install   create .venv and install dependencies"
 	@echo "make data      regenerate the synthetic corpus (SEED=$(SEED) N=$(N))"
+	@echo "make fixtures  render the proof-of-delivery documents"
 	@echo "make test      run the unit tests"
 	@echo "make eval      run the held-out evaluation, write evals/report.md"
 	@echo "make sweep     cost sensitivity sweep, write evals/cost_sweep.md"
@@ -21,6 +22,9 @@ install:
 
 data:
 	$(PY) data/generator/generate.py --seed $(SEED) --n $(N)
+
+fixtures:
+	$(PY) data/generator/fixtures.py --seed $(SEED)
 
 test:
 	PYTHONPATH=src $(PY) -m pytest tests -q
