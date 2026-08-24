@@ -16,6 +16,7 @@ node_modules/
 data/train/*.json
 data/test/*.json
 !data/test/MANIFEST.json
+ledger.jsonl
 ledger.db
 *.log
 "screen short"/
