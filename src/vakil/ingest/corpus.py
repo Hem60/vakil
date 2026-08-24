@@ -11,6 +11,7 @@ import json
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 from vakil.models import (
     DeliveryProof,
@@ -40,7 +41,7 @@ def _dt(value: str) -> datetime:
     return datetime.fromisoformat(value)
 
 
-def _order(raw: dict | None) -> Order | None:
+def _order(raw: dict[str, Any] | None) -> Order | None:
     if not raw:
         return None
     return Order(
@@ -56,7 +57,7 @@ def _order(raw: dict | None) -> Order | None:
     )
 
 
-def _delivery(raw: dict | None) -> DeliveryProof | None:
+def _delivery(raw: dict[str, Any] | None) -> DeliveryProof | None:
     if not raw:
         return None
     return DeliveryProof(
@@ -70,7 +71,7 @@ def _delivery(raw: dict | None) -> DeliveryProof | None:
     )
 
 
-def _support(raw: dict | None) -> SupportThread | None:
+def _support(raw: dict[str, Any] | None) -> SupportThread | None:
     if not raw:
         return None
     return SupportThread(
@@ -82,7 +83,7 @@ def _support(raw: dict | None) -> SupportThread | None:
     )
 
 
-def _policy(raw: dict | None) -> MerchantPolicy | None:
+def _policy(raw: dict[str, Any] | None) -> MerchantPolicy | None:
     if not raw:
         return None
     return MerchantPolicy(
@@ -93,7 +94,7 @@ def _policy(raw: dict | None) -> MerchantPolicy | None:
     )
 
 
-def _prior(raw: dict) -> PriorTransaction:
+def _prior(raw: dict[str, Any]) -> PriorTransaction:
     return PriorTransaction(
         payment_id=raw["payment_id"],
         paid_at=_dt(raw["paid_at"]),
@@ -106,7 +107,7 @@ def _prior(raw: dict) -> PriorTransaction:
     )
 
 
-def _missing(raw: dict) -> tuple[str, ...]:
+def _missing(raw: dict[str, Any]) -> tuple[str, ...]:
     slots = {
         "order": raw.get("order"),
         "delivery_proof": raw.get("delivery"),

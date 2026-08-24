@@ -49,6 +49,11 @@ target-version = "py312"
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM"]
 
+[tool.ruff.lint.per-file-ignores]
+# Typer declares CLI parameters as call expressions in defaults. That is the
+# framework's required idiom, not the mutable-default bug B008 looks for.
+"src/vakil/cli.py" = ["B008"]
+
 [tool.mypy]
 python_version = "3.12"
 strict = true

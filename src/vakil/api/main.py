@@ -11,6 +11,7 @@ import hashlib
 import hmac
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 from fastapi import FastAPI, Header, HTTPException, Request
 
@@ -30,13 +31,13 @@ def _now() -> datetime:
 
 
 @app.get("/health")
-def health() -> dict:
+def health() -> dict[str, Any]:
     ok, msg = LEDGER.verify()
     return {"status": "ok", "ledger": {"intact": ok, "detail": msg}}
 
 
 @app.get("/cases")
-def list_cases() -> list[dict]:
+def list_cases() -> list[dict[str, Any]]:
     out = []
     for case in load_split(CORPUS):
         result = assess(case, settings(), _now())
@@ -56,7 +57,7 @@ def list_cases() -> list[dict]:
 
 
 @app.get("/cases/{case_id}")
-def get_case(case_id: str) -> dict:
+def get_case(case_id: str) -> dict[str, Any]:
     path = CORPUS / f"{case_id}.json"
     if not path.exists():
         raise HTTPException(404, f"no such case: {case_id}")
@@ -65,7 +66,7 @@ def get_case(case_id: str) -> dict:
 
 
 @app.get("/ledger/verify")
-def ledger_verify() -> dict:
+def ledger_verify() -> dict[str, Any]:
     ok, msg = LEDGER.verify()
     if not ok:
         raise HTTPException(409, msg)
@@ -76,7 +77,7 @@ def ledger_verify() -> dict:
 async def razorpay_webhook(
     request: Request,
     x_razorpay_signature: str = Header(default=""),
-) -> dict:
+) -> dict[str, Any]:
     """Razorpay signs webhooks with HMAC-SHA256 over the raw body.
 
     Verified before the payload is parsed, let alone acted on - an unsigned

@@ -27,8 +27,9 @@ import json
 from collections.abc import Iterator
 from enum import StrEnum
 from pathlib import Path
+from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict
 
 from vakil.models import EvidenceBundle, ReasonCode
 
@@ -172,7 +173,7 @@ class Rulebook:
 
     # ----------------------------------------------------------- coverage
 
-    def coverage(self) -> dict:
+    def coverage(self) -> dict[str, Any]:
         """How much of this corpus has actually been checked against a licensed
         rulebook. Reported so the number is visible rather than assumed."""
         verified = sum(1 for r in self._rules if r.verified)

@@ -28,6 +28,9 @@ jobs:
       - name: Lint
         run: ruff check src tests evals data
 
+      - name: Type check
+        run: mypy
+
       - name: Unit tests
         run: pytest tests -q
 

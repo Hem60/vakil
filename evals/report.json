@@ -299,7 +299,7 @@
     }
   },
   "throughput": {
-    "cases_per_second": 27846.6,
-    "seconds": 0.004
+    "cases_per_second": 13907.4,
+    "seconds": 0.007
   }
 }

@@ -164,7 +164,8 @@ def render_pod(case: dict, tier: str, rng: random.Random) -> Image.Image:
 
     draw.text(
         (MARGIN, PAGE[1] - MARGIN - 40),
-        f"System generated. {delivery['carrier']} does not accept liability for transcription errors.",
+        f"System generated. {delivery['carrier']} does not accept liability "
+        "for transcription errors.",
         font=small,
         fill=(120, 120, 120),
     )
@@ -284,7 +285,9 @@ def ground_truth(case: dict, tier: str, path: Path) -> dict:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=20260824)
-    ap.add_argument("--limit", type=int, default=0, help="render only the first N (for a quick look)")
+    ap.add_argument(
+        "--limit", type=int, default=0, help="render only the first N (for a quick look)"
+    )
     args = ap.parse_args()
 
     rng = random.Random(args.seed)

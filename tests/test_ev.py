@@ -101,7 +101,10 @@ def test_vamp_pressure_handles_zero_threshold():
     assert vamp_pressure(0.005, 0.0) == 0.0
 
 
-@pytest.mark.parametrize("ratio,expect", [(0.0001, Verdict.FIGHT), (0.0089, Verdict.PREEMPTIVE_REFUND)])
+@pytest.mark.parametrize(
+    "ratio,expect",
+    [(0.0001, Verdict.FIGHT), (0.0089, Verdict.PREEMPTIVE_REFUND)],
+)
 def test_pre_dispute_lane_flips_under_vamp_pressure(ratio: float, expect: Verdict):
     """Same payment, same odds - only the merchant's dispute ratio differs.
     With headroom, ride it out. Near the ceiling, refund before it lands."""

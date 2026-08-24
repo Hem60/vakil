@@ -83,7 +83,11 @@ def calibration(rows: list[dict]) -> dict:
     bins = []
     for i in range(CALIBRATION_BINS):
         lo, hi = i / CALIBRATION_BINS, (i + 1) / CALIBRATION_BINS
-        members = [r for r in rows if lo <= r["p_win"] < hi or (i == CALIBRATION_BINS - 1 and r["p_win"] == 1.0)]
+        last_bin = i == CALIBRATION_BINS - 1
+        members = [
+            r for r in rows
+            if lo <= r["p_win"] < hi or (last_bin and r["p_win"] == 1.0)
+        ]
         if not members:
             continue
         bins.append(
@@ -263,7 +267,8 @@ def render(report: dict) -> str:
         )
     lines += [
         "",
-        f"False-positive cost (money burned fighting losers): **{rupees(m['false_positive_cost'])}**",
+        "False-positive cost (money burned fighting losers): "
+        f"**{rupees(m['false_positive_cost'])}**",
         "",
         f"Uplift vs always-fight {rupees(m['uplift_vs_always_fight'])} | "
         f"vs always-fold {rupees(m['uplift_vs_always_fold'])}",
@@ -297,7 +302,8 @@ def render(report: dict) -> str:
         f"against a licensed rulebook** - Visa and Mastercard rulebooks are proprietary "
         f"and are not reproduced in this repository.",
         "",
-        f"{rb['cases_with_blocking_gaps']} of {report['n']} cases are missing evidence the "
+        f"{rb['cases_with_blocking_gaps']} of {report['n']} cases are missing evidence "
+        "the "
         "network requires. Most commonly:",
         "",
         "| evidence field | cases missing it |",
@@ -315,7 +321,8 @@ def render(report: dict) -> str:
         f"Throughput: {report['throughput']['cases_per_second']} cases/sec "
         f"(decision path only, no model calls).",
         "",
-        "> Synthetic corpus. See docs/DATA-CARD.md for how it was built and what it cannot tell you.",
+        "> Synthetic corpus. See docs/DATA-CARD.md for how it was built and what it "
+        "> cannot tell you.",
     ]
     return "\n".join(lines)
 

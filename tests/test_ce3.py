@@ -61,7 +61,9 @@ def test_qualifies_with_two_aged_matching_priors():
 def test_rejects_wrong_reason_code():
     """CE 3.0 is a 10.4 remedy. Applying it elsewhere would be a rule error
     that an issuer would reject, so we refuse before spending anything."""
-    result = qualifies_ce3(dispute(ReasonCode.NON_DELIVERY), bundle(prior(150), prior(200)), CURRENT)
+    result = qualifies_ce3(
+        dispute(ReasonCode.NON_DELIVERY), bundle(prior(150), prior(200)), CURRENT
+    )
     assert not result.qualifies
     assert "10.4" in result.reason
 

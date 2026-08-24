@@ -12,6 +12,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from functools import lru_cache
+from typing import Any
 
 from vakil.config import Settings
 from vakil.decide.ev import evaluate
@@ -74,7 +75,7 @@ class Assessment:
     def blocking(self) -> list[EvidenceGap]:
         return blocking_gaps(self.gaps)
 
-    def to_ledger_payload(self) -> dict:
+    def to_ledger_payload(self) -> dict[str, Any]:
         return {
             "case_id": self.case.case_id,
             "reason_code": str(self.case.dispute.reason_code),

@@ -42,7 +42,7 @@ VALID_EVIDENCE_FIELDS = {
 
 
 @app.post("/v1/documents")
-async def upload_document(file: UploadFile, purpose: str = "dispute_evidence") -> dict:
+async def upload_document(file: UploadFile, purpose: str = "dispute_evidence") -> dict[str, Any]:
     doc_id = f"doc_{secrets.token_hex(8)}"
     body = await file.read()
     _documents[doc_id] = {
@@ -57,21 +57,24 @@ async def upload_document(file: UploadFile, purpose: str = "dispute_evidence") -
 
 
 @app.put("/v1/_fixtures/disputes/{dispute_id}")
-def seed_dispute(dispute_id: str, body: dict) -> dict:
+def seed_dispute(dispute_id: str, body: dict[str, Any]) -> dict[str, Any]:
     """Test-only: plant a dispute so the filing path has something to act on."""
     _disputes[dispute_id] = {**body, "id": dispute_id, "entity": "dispute"}
     return _disputes[dispute_id]
 
 
 @app.get("/v1/disputes/{dispute_id}")
-def fetch_dispute(dispute_id: str) -> dict:
+def fetch_dispute(dispute_id: str) -> dict[str, Any]:
     if dispute_id not in _disputes:
-        raise HTTPException(400, {"error": {"code": "BAD_REQUEST_ERROR", "description": "no such dispute"}})
+        raise HTTPException(
+            400,
+            {"error": {"code": "BAD_REQUEST_ERROR", "description": "no such dispute"}},
+        )
     return _disputes[dispute_id]
 
 
 @app.patch("/v1/disputes/{dispute_id}")
-def attach_evidence(dispute_id: str, body: dict) -> dict:
+def attach_evidence(dispute_id: str, body: dict[str, Any]) -> dict[str, Any]:
     dispute = fetch_dispute(dispute_id)
     if dispute["status"] != "open":
         raise HTTPException(400, {"error": {"description": "dispute is not open"}})
@@ -94,7 +97,7 @@ def attach_evidence(dispute_id: str, body: dict) -> dict:
 
 
 @app.post("/v1/disputes/{dispute_id}/contest")
-def contest(dispute_id: str, body: dict | None = None) -> dict:
+def contest(dispute_id: str, body: dict[str, Any] | None = None) -> dict[str, Any]:
     dispute = fetch_dispute(dispute_id)
     evidence = dispute.get("evidence", {})
     documents = [
@@ -111,7 +114,7 @@ def contest(dispute_id: str, body: dict | None = None) -> dict:
 
 
 @app.post("/v1/disputes/{dispute_id}/accept")
-def accept(dispute_id: str) -> dict:
+def accept(dispute_id: str) -> dict[str, Any]:
     dispute = fetch_dispute(dispute_id)
     dispute["status"] = "lost"
     return dispute

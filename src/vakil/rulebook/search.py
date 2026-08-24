@@ -36,14 +36,16 @@ B = 0.75
 
 _TOKEN = re.compile(r"[a-z0-9]+")
 
-#: Words that carry no signal in a corpus where every entry is about disputes.
-STOPWORDS = frozenset(
-    """
-    a an and are as at be by for from has have in is it its of on or that the
-    to was were will with this these those which what when where must should
-    evidence dispute disputed merchant cardholder transaction
-    """.split()
-)
+STOPWORDS = frozenset({
+    # ordinary English stopwords
+    "a", "an", "and", "are", "as", "at", "be", "by", "for", "from",
+    "has", "have", "in", "is", "it", "its", "of", "on", "or", "that",
+    "the", "to", "was", "were", "will", "with", "this", "these", "those",
+    "which", "what", "when", "where", "must", "should",
+    # domain stopwords: in a corpus where every entry concerns disputes, these
+    # match everything and therefore distinguish nothing
+    "evidence", "dispute", "disputed", "merchant", "cardholder", "transaction",
+})
 
 
 def tokenize(text: str) -> list[str]:
