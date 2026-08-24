@@ -78,12 +78,18 @@ not about deciding well, and is labelled as such. The robust crossover on the
 current corpus is **₹2,000**, and the effect is concentrated entirely in the
 small-dispute band.
 
-Accounting is deliberately conservative. A fight that wins recovers the disputed
-amount and pays the filing cost; a fight that loses pays the filing cost and
-recovers nothing; a fold nets zero, because the money was debited when the
-chargeback landed. Arbitration exposure is priced into the *decision* but not
-into realised results, which understates Vakil's advantage rather than
-overstating it.
+A fight that wins recovers the disputed amount and pays the filing cost; a fight
+that loses pays the filing cost and recovers nothing; a fold nets zero, because
+the money was debited when the chargeback landed.
+
+**Arbitration exposure is reported both ways.** The EV engine prices it into
+every decision, so omitting it from realised results scores the system against a
+cost it was told to avoid — which penalises folding specifically. That was
+invisible while the unfitted model fought almost everything and became
+load-bearing the moment fitting let it fold. Both columns appear in the report
+rather than one replacing the other, because switching to the flattering
+accounting right after seeing it flatter you is indistinguishable from moving
+the goalposts. See D9.
 
 ### 5. Throughput
 
@@ -99,23 +105,23 @@ is not confident, it is untested. Current refusal triggers:
 - the response window has closed
 - no order record, so the transaction cannot be established
 - evidence under 25% complete
-- the win estimate sits within 8 percentage points of the break-even
-  probability — an error smaller than the model's own would flip the call
+- the win estimate sits within the model's own measured calibration error of
+  the break-even probability (currently **0.089**, read from the fitted
+  artefact) — an error smaller than the model typically makes would flip the
+  call
 
 ## Known weaknesses
 
 Listed here so they are found by a reader rather than by a panel.
 
-1. **The win model has never been fit.** Coefficients are a hand-set prior from
-   published representment win rates. Brier 0.259 with a worst-bin gap of 0.53
-   is poor calibration, and it is the single biggest source of error in the
-   money figures. Day 6.
-2. **Zero true negatives at the default filing cost.** At ₹250, fighting is
-   positive-EV for almost every case, so the engine almost never folds — recall
-   is trivially 1.00 and precision equals the corpus base rate. The single-cost
-   confusion matrix is therefore close to uninformative on its own, and should
-   be read alongside the sweep rather than instead of it. Resolved as a
-   *measurement* question in D6; the model fit on day 6 is what will move it.
+1. ~~**The win model has never been fit.**~~ Fitted on `data/train` in D9.
+   Brier 0.259 → 0.175 on held-out, precision 0.436 → 0.700. Calibration method
+   chosen by cross-validation inside the training set. Remaining weakness: the
+   worst calibration bin still gaps badly, but the offending bins hold 2-4 cases
+   each, so that number is small-sample noise more than miscalibration.
+2. ~~**Zero true negatives at the default filing cost.**~~ Fixed by fitting:
+   12 true negatives on the held-out split. The engine now folds cases it
+   believes it would lose, which is what made the accounting bug in D9 visible.
 3. ~~**Escalation rate is too high at high filing costs** — 66% at ₹2,000.~~
    Fixed in D7 by moving the floor into probability space: escalate when the win
    estimate sits within 8 points of break-even. Escalation at ₹2,000 fell from
@@ -139,9 +145,9 @@ Listed here so they are found by a reader rather than by a panel.
 |---|---|
 | ~~Cost-sensitivity sweep~~ — done, see D6 | 1 |
 | ~~Absolute rather than proportional confidence floor~~ — done, see D7 | 1 |
-| Fitted + isotonic-calibrated win model, refit in CI | 6 |
-| Set the 8-point escalation margin from measured calibration error | 6 |
-| Heavier small-ticket tail in the corpus, where the effect lives | 6 |
+| ~~Fitted + calibrated win model, refit in CI~~ — done, see D9 | 6 |
+| ~~Set the escalation margin from measured calibration error~~ — done, 0.089 | 6 |
+| Heavier small-ticket tail in the corpus, where the effect lives | 9 |
 | Provenance gate: claim strip rate, and a leakage check on stripped claims | 7 |
 | Extraction accuracy against fixture PODs with known ground truth | 5 |
 | Token and rupee cost per case | 9 |

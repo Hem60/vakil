@@ -6,65 +6,73 @@ Split `D:\Razorpay\vakil\data\test` | n=100 | dataset sha256 `a67456b827d7fe3d`
 
 | metric | value |
 |---|---:|
-| precision | 0.436 |
-| recall | 1.000 |
-| F1 | 0.607 |
-| accuracy | 0.443 |
-| decided / escalated | 79 / 21 |
-| TP / FP / FN / TN | 34 / 44 / 0 / 1 |
+| precision | 0.700 |
+| recall | 0.903 |
+| F1 | 0.789 |
+| accuracy | 0.727 |
+| decided / escalated | 55 / 45 |
+| TP / FP / FN / TN | 28 / 12 / 3 / 12 |
 
 ## Calibration
 
-Brier score **0.2593** | largest bin gap 0.527
+Brier score **0.1746** | largest bin gap 0.637
 
 | predicted | observed | n |
 |---:|---:|---:|
-| 0.235 | 0.222 | 9 |
-| 0.357 | 0.000 | 7 |
-| 0.471 | 0.200 | 10 |
-| 0.527 | 0.000 | 4 |
-| 0.655 | 0.389 | 18 |
-| 0.748 | 0.400 | 10 |
-| 0.845 | 0.524 | 21 |
-| 0.961 | 0.809 | 21 |
+| 0.044 | 0.125 | 32 |
+| 0.129 | 0.250 | 8 |
+| 0.240 | 0.421 | 19 |
+| 0.363 | 1.000 | 2 |
+| 0.453 | 0.143 | 7 |
+| 0.506 | 0.500 | 4 |
+| 0.665 | 1.000 | 2 |
+| 0.771 | 1.000 | 4 |
+| 0.864 | 0.667 | 9 |
+| 0.968 | 0.923 | 13 |
 
 ## Money
 
-| strategy | fought | recovered | filing spend | net |
+Two accountings, because they disagree. The left excludes arbitration
+exposure on a lost representment; the right charges it. The EV engine
+prices that exposure into every decision, so excluding it scores a
+strategy against a cost it was told to avoid - which penalises folding
+specifically. See D9 in docs/DECISIONS.md.
+
+| strategy | fought | recovered | net (no arb.) | net (arb. charged) |
 |---|---:|---:|---:|---:|
-| Vakil | 78 | Rs 230,357 | Rs 19,500 | **Rs 210,857** |
-| always fight | 100 | Rs 285,946 | Rs 25,000 | **Rs 260,946** |
-| always fold | 0 | Rs 0 | Rs 0 | **Rs 0** |
+| Vakil | 40 | Rs 197,963 | **Rs 187,963** | **Rs 178,363** |
+| always fight | 100 | Rs 285,946 | **Rs 260,946** | **Rs 215,346** |
+| always fold | 0 | Rs 0 | **Rs 0** | **Rs 0** |
 
-False-positive cost (money burned fighting losers): **Rs 11,000**
+False-positive cost (money burned fighting losers): **Rs 3,000**
 
-Uplift vs always-fight Rs -50,089 | vs always-fold Rs 210,857
+Uplift vs always-fight: Rs -72,983 without arbitration, Rs -36,983 with it.
 
 ## Per reason code
 
 | code | cases | fought | of those, won |
 |---|---:|---:|---:|
-| 10.4 | 28 | 22 | 9 |
-| 12.6 | 5 | 3 | 2 |
-| 13.1 | 25 | 19 | 9 |
-| 13.2 | 13 | 13 | 8 |
-| 13.3 | 16 | 10 | 2 |
-| 13.6 | 13 | 11 | 4 |
+| 10.4 | 28 | 13 | 9 |
+| 12.6 | 5 | 2 | 1 |
+| 13.1 | 25 | 12 | 9 |
+| 13.2 | 13 | 8 | 6 |
+| 13.3 | 16 | 2 | 2 |
+| 13.6 | 13 | 3 | 1 |
 
 ## Exceptions (refused to decide)
 
-21 of 100 cases were handed to a human.
+45 of 100 cases were handed to a human.
 
-- `case_0010` (13.3): win estimate 0.23 within 8% of break-even 0.15
+- `case_0006` (10.4): win estimate 0.23 within 9% of break-even 0.23
+- `case_0017` (13.1): win estimate 0.22 within 9% of break-even 0.18
 - `case_0036` (10.4): response deadline passed 26.0h ago
+- `case_0043` (13.1): win estimate 0.14 within 9% of break-even 0.07
+- `case_0044` (13.3): win estimate 0.12 within 9% of break-even 0.13
 - `case_0049` (13.1): response deadline passed 76.0h ago
 - `case_0063` (13.1): response deadline passed 21.0h ago
+- `case_0065` (13.2): win estimate 0.16 within 9% of break-even 0.15
 - `case_0066` (10.4): response deadline passed 55.0h ago
 - `case_0068` (13.1): response deadline passed 22.0h ago
-- `case_0077` (12.6): response deadline passed 38.0h ago
-- `case_0088` (10.4): response deadline passed 51.0h ago
-- `case_0104` (13.6): response deadline passed 94.0h ago
-- `case_0107` (12.6): response deadline passed 11.0h ago
 
 ## Rulebook coverage
 
@@ -82,6 +90,6 @@ Uplift vs always-fight Rs -50,089 | vs always-fold Rs 210,857
 
 Gaps inform but do not gate: a missing document lowers the win probability and the EV engine folds on its own. Escalating every case with a gap would flood the human queue with cases a human cannot fix either.
 
-Throughput: 13907.4 cases/sec (decision path only, no model calls).
+Throughput: 22762.5 cases/sec (decision path only, no model calls).
 
 > Synthetic corpus. See docs/DATA-CARD.md for how it was built and what it > cannot tell you.

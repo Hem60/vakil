@@ -12,12 +12,15 @@ Runs the full decision path over data/test and reports six things:
   6. throughput
   7. the exception list - cases the system refused to decide, and why
 
-Accounting is deliberately conservative. A fight that wins recovers the
-disputed amount and pays the filing cost; a fight that loses pays the filing
-cost and recovers nothing; a fold nets zero, because the money was already
-debited when the chargeback landed. Arbitration exposure is priced into the
-*decision* but not into realised results, which understates our advantage
-rather than overstating it.
+Accounting: a fight that wins recovers the disputed amount and pays the
+filing cost; a fight that loses pays the filing cost and recovers nothing; a
+fold nets zero, because the money was already debited when the chargeback
+landed.
+
+Arbitration exposure is reported **both ways**. The EV engine prices it into
+every decision, so leaving it out of realised results scores a strategy against
+a cost it was told to avoid - which penalises folding specifically, and was
+invisible while the unfitted model fought almost everything. See D9.
 
 Usage:  python evals/run_eval.py [--split data/test] [--fail-under-f1 0.0]
 """
@@ -102,13 +105,23 @@ def calibration(rows: list[dict]) -> dict:
     return {"brier": round(brier, 4), "max_bin_gap": round(max_gap, 4), "bins": bins}
 
 
-def money(rows: list[dict], cfg: Settings) -> dict:
-    """Realised rupees under Vakil and under both trivial baselines."""
+def money(rows: list[dict], cfg: Settings, *, charge_arbitration: bool) -> dict:
+    """Realised rupees under Vakil and under both trivial baselines.
+
+    `charge_arbitration` decides whether a lost representment also pays the
+    arbitration exposure the EV engine prices into every decision. Both
+    accountings are reported, because they disagree and the disagreement is
+    the point - see D9 in docs/DECISIONS.md. Omitting the charge scores a
+    strategy against a cost it was told to avoid, which systematically
+    penalises folding.
+    """
     cost = cfg.vakil_representment_cost
+    exposure = cfg.vakil_arbitration_exposure if charge_arbitration else 0
 
     def realised(fights: list[dict]) -> tuple[int, int]:
         recovered = sum(r["amount"] for r in fights if r["should_win"])
-        spent = cost * len(fights)
+        lost = sum(1 for r in fights if not r["should_win"])
+        spent = cost * len(fights) + exposure * lost
         return recovered, spent
 
     vakil_fights = [r for r in rows if r["verdict"] == Verdict.FIGHT]
@@ -200,7 +213,8 @@ def run(split: Path) -> dict:
         "dataset_sha256": manifest.get("sha256"),
         "classification": confusion(rows),
         "calibration": calibration(rows),
-        "money_paise": money(rows, cfg),
+        "money_paise": money(rows, cfg, charge_arbitration=False),
+        "money_paise_with_arbitration": money(rows, cfg, charge_arbitration=True),
         "by_reason_code": by_reason,
         "escalations": {"n": len(exceptions), "cases": exceptions[:25]},
         "rulebook": {
@@ -248,11 +262,18 @@ def render(report: dict) -> str:
     for b in cal["bins"]:
         lines.append(f"| {b['predicted']:.3f} | {b['observed']:.3f} | {b['n']} |")
 
+    m2 = report["money_paise_with_arbitration"]
     lines += [
         "",
         "## Money",
         "",
-        "| strategy | fought | recovered | filing spend | net |",
+        "Two accountings, because they disagree. The left excludes arbitration",
+        "exposure on a lost representment; the right charges it. The EV engine",
+        "prices that exposure into every decision, so excluding it scores a",
+        "strategy against a cost it was told to avoid - which penalises folding",
+        "specifically. See D9 in docs/DECISIONS.md.",
+        "",
+        "| strategy | fought | recovered | net (no arb.) | net (arb. charged) |",
         "|---|---:|---:|---:|---:|",
     ]
     for name, key in (
@@ -260,18 +281,18 @@ def render(report: dict) -> str:
         ("always fight", "baseline_always_fight"),
         ("always fold", "baseline_always_fold"),
     ):
-        b = m[key]
+        b, b2 = m[key], m2[key]
         lines.append(
             f"| {name} | {b['cases_fought']} | {rupees(b['recovered'])} | "
-            f"{rupees(b['filing_spend'])} | **{rupees(b['net'])}** |"
+            f"**{rupees(b['net'])}** | **{rupees(b2['net'])}** |"
         )
     lines += [
         "",
         "False-positive cost (money burned fighting losers): "
         f"**{rupees(m['false_positive_cost'])}**",
         "",
-        f"Uplift vs always-fight {rupees(m['uplift_vs_always_fight'])} | "
-        f"vs always-fold {rupees(m['uplift_vs_always_fold'])}",
+        f"Uplift vs always-fight: {rupees(m['uplift_vs_always_fight'])} without "
+        f"arbitration, {rupees(m2['uplift_vs_always_fight'])} with it.",
         "",
         "## Per reason code",
         "",

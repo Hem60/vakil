@@ -3,76 +3,88 @@
   "n": 100,
   "dataset_sha256": "a67456b827d7fe3dfb69b18c9d5bb02c7b294364820ec5dcbba22ac8fbdf5a4b",
   "classification": {
-    "tp": 34,
-    "fp": 44,
-    "fn": 0,
-    "tn": 1,
-    "n_decided": 79,
-    "precision": 0.4359,
-    "recall": 1.0,
-    "f1": 0.6071,
-    "accuracy": 0.443
+    "tp": 28,
+    "fp": 12,
+    "fn": 3,
+    "tn": 12,
+    "n_decided": 55,
+    "precision": 0.7,
+    "recall": 0.9032,
+    "f1": 0.7887,
+    "accuracy": 0.7273
   },
   "calibration": {
-    "brier": 0.2593,
-    "max_bin_gap": 0.5268,
+    "brier": 0.1746,
+    "max_bin_gap": 0.6366,
     "bins": [
       {
+        "range": "0.0-0.1",
+        "n": 32,
+        "predicted": 0.0438,
+        "observed": 0.125
+      },
+      {
+        "range": "0.1-0.2",
+        "n": 8,
+        "predicted": 0.1289,
+        "observed": 0.25
+      },
+      {
         "range": "0.2-0.3",
-        "n": 9,
-        "predicted": 0.2347,
-        "observed": 0.2222
+        "n": 19,
+        "predicted": 0.2399,
+        "observed": 0.4211
       },
       {
         "range": "0.3-0.4",
-        "n": 7,
-        "predicted": 0.357,
-        "observed": 0.0
+        "n": 2,
+        "predicted": 0.3634,
+        "observed": 1.0
       },
       {
         "range": "0.4-0.5",
-        "n": 10,
-        "predicted": 0.4713,
-        "observed": 0.2
+        "n": 7,
+        "predicted": 0.4532,
+        "observed": 0.1429
       },
       {
         "range": "0.5-0.6",
         "n": 4,
-        "predicted": 0.5268,
-        "observed": 0.0
+        "predicted": 0.5056,
+        "observed": 0.5
       },
       {
         "range": "0.6-0.7",
-        "n": 18,
-        "predicted": 0.6547,
-        "observed": 0.3889
+        "n": 2,
+        "predicted": 0.6648,
+        "observed": 1.0
       },
       {
         "range": "0.7-0.8",
-        "n": 10,
-        "predicted": 0.7476,
-        "observed": 0.4
+        "n": 4,
+        "predicted": 0.7715,
+        "observed": 1.0
       },
       {
         "range": "0.8-0.9",
-        "n": 21,
-        "predicted": 0.8445,
-        "observed": 0.5238
+        "n": 9,
+        "predicted": 0.8642,
+        "observed": 0.6667
       },
       {
         "range": "0.9-1.0",
-        "n": 21,
-        "predicted": 0.9605,
-        "observed": 0.8095
+        "n": 13,
+        "predicted": 0.9681,
+        "observed": 0.9231
       }
     ]
   },
   "money_paise": {
     "vakil": {
-      "cases_fought": 78,
-      "recovered": 23035700,
-      "filing_spend": 1950000,
-      "net": 21085700
+      "cases_fought": 40,
+      "recovered": 19796300,
+      "filing_spend": 1000000,
+      "net": 18796300
     },
     "baseline_always_fight": {
       "cases_fought": 100,
@@ -86,51 +98,82 @@
       "filing_spend": 0,
       "net": 0
     },
-    "false_positive_cost": 1100000,
-    "false_positive_amount_at_risk": 31614300,
-    "uplift_vs_always_fight": -5008900,
-    "uplift_vs_always_fold": 21085700
+    "false_positive_cost": 300000,
+    "false_positive_amount_at_risk": 9468400,
+    "uplift_vs_always_fight": -7298300,
+    "uplift_vs_always_fold": 18796300
+  },
+  "money_paise_with_arbitration": {
+    "vakil": {
+      "cases_fought": 40,
+      "recovered": 19796300,
+      "filing_spend": 1960000,
+      "net": 17836300
+    },
+    "baseline_always_fight": {
+      "cases_fought": 100,
+      "recovered": 28594600,
+      "filing_spend": 7060000,
+      "net": 21534600
+    },
+    "baseline_always_fold": {
+      "cases_fought": 0,
+      "recovered": 0,
+      "filing_spend": 0,
+      "net": 0
+    },
+    "false_positive_cost": 300000,
+    "false_positive_amount_at_risk": 9468400,
+    "uplift_vs_always_fight": -3698300,
+    "uplift_vs_always_fold": 17836300
   },
   "by_reason_code": {
     "13.2": {
       "n": 13,
-      "fought": 13,
-      "won": 8
+      "fought": 8,
+      "won": 6
     },
     "13.3": {
       "n": 16,
-      "fought": 10,
+      "fought": 2,
       "won": 2
     },
     "10.4": {
       "n": 28,
-      "fought": 22,
+      "fought": 13,
       "won": 9
     },
     "13.6": {
       "n": 13,
-      "fought": 11,
-      "won": 4
+      "fought": 3,
+      "won": 1
     },
     "13.1": {
       "n": 25,
-      "fought": 19,
+      "fought": 12,
       "won": 9
     },
     "12.6": {
       "n": 5,
-      "fought": 3,
-      "won": 2
+      "fought": 2,
+      "won": 1
     }
   },
   "escalations": {
-    "n": 21,
+    "n": 45,
     "cases": [
       {
-        "case_id": "case_0010",
-        "reason_code": "13.3",
+        "case_id": "case_0006",
+        "reason_code": "10.4",
         "why": [
-          "win estimate 0.23 within 8% of break-even 0.15"
+          "win estimate 0.23 within 9% of break-even 0.23"
+        ]
+      },
+      {
+        "case_id": "case_0017",
+        "reason_code": "13.1",
+        "why": [
+          "win estimate 0.22 within 9% of break-even 0.18"
         ]
       },
       {
@@ -138,6 +181,20 @@
         "reason_code": "10.4",
         "why": [
           "response deadline passed 26.0h ago"
+        ]
+      },
+      {
+        "case_id": "case_0043",
+        "reason_code": "13.1",
+        "why": [
+          "win estimate 0.14 within 9% of break-even 0.07"
+        ]
+      },
+      {
+        "case_id": "case_0044",
+        "reason_code": "13.3",
+        "why": [
+          "win estimate 0.12 within 9% of break-even 0.13"
         ]
       },
       {
@@ -155,6 +212,13 @@
         ]
       },
       {
+        "case_id": "case_0065",
+        "reason_code": "13.2",
+        "why": [
+          "win estimate 0.16 within 9% of break-even 0.15"
+        ]
+      },
+      {
         "case_id": "case_0066",
         "reason_code": "10.4",
         "why": [
@@ -169,6 +233,13 @@
         ]
       },
       {
+        "case_id": "case_0073",
+        "reason_code": "10.4",
+        "why": [
+          "win estimate 0.07 within 9% of break-even 0.15"
+        ]
+      },
+      {
         "case_id": "case_0077",
         "reason_code": "12.6",
         "why": [
@@ -176,10 +247,31 @@
         ]
       },
       {
+        "case_id": "case_0080",
+        "reason_code": "13.2",
+        "why": [
+          "win estimate 0.11 within 9% of break-even 0.15"
+        ]
+      },
+      {
+        "case_id": "case_0081",
+        "reason_code": "10.4",
+        "why": [
+          "win estimate 0.07 within 9% of break-even 0.08"
+        ]
+      },
+      {
         "case_id": "case_0088",
         "reason_code": "10.4",
         "why": [
           "response deadline passed 51.0h ago"
+        ]
+      },
+      {
+        "case_id": "case_0102",
+        "reason_code": "13.6",
+        "why": [
+          "win estimate 0.23 within 9% of break-even 0.18"
         ]
       },
       {
@@ -204,10 +296,24 @@
         ]
       },
       {
+        "case_id": "case_0114",
+        "reason_code": "13.2",
+        "why": [
+          "win estimate 0.11 within 9% of break-even 0.08"
+        ]
+      },
+      {
         "case_id": "case_0120",
         "reason_code": "13.1",
         "why": [
           "response deadline passed 14.0h ago"
+        ]
+      },
+      {
+        "case_id": "case_0127",
+        "reason_code": "13.6",
+        "why": [
+          "win estimate 0.10 within 9% of break-even 0.15"
         ]
       },
       {
@@ -218,59 +324,17 @@
         ]
       },
       {
-        "case_id": "case_0156",
-        "reason_code": "10.4",
+        "case_id": "case_0152",
+        "reason_code": "13.6",
         "why": [
-          "response deadline passed 59.0h ago"
+          "win estimate 0.23 within 9% of break-even 0.18"
         ]
       },
       {
-        "case_id": "case_0170",
-        "reason_code": "10.4",
-        "why": [
-          "response deadline passed 12.0h ago"
-        ]
-      },
-      {
-        "case_id": "case_0207",
+        "case_id": "case_0153",
         "reason_code": "13.3",
         "why": [
-          "win estimate 0.22 within 8% of break-even 0.15"
-        ]
-      },
-      {
-        "case_id": "case_0226",
-        "reason_code": "13.3",
-        "why": [
-          "response deadline passed 55.0h ago"
-        ]
-      },
-      {
-        "case_id": "case_0227",
-        "reason_code": "13.1",
-        "why": [
-          "response deadline passed 43.0h ago"
-        ]
-      },
-      {
-        "case_id": "case_0261",
-        "reason_code": "13.1",
-        "why": [
-          "response deadline passed 91.0h ago"
-        ]
-      },
-      {
-        "case_id": "case_0263",
-        "reason_code": "13.3",
-        "why": [
-          "response deadline passed 27.0h ago"
-        ]
-      },
-      {
-        "case_id": "case_0271",
-        "reason_code": "13.3",
-        "why": [
-          "response deadline passed 3.0h ago"
+          "win estimate 0.01 within 9% of break-even 0.08"
         ]
       }
     ]
@@ -299,7 +363,7 @@
     }
   },
   "throughput": {
-    "cases_per_second": 13907.4,
-    "seconds": 0.007
+    "cases_per_second": 22762.5,
+    "seconds": 0.004
   }
 }

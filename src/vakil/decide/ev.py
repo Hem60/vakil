@@ -33,14 +33,18 @@ from __future__ import annotations
 from vakil.config import Settings
 from vakil.models import CE3Result, Decision, Dispute, EVBreakdown, Verdict
 
-#: How far the estimated win probability must sit from the break-even point
-#: before the engine will decide. Below this the case goes to a human.
+#: Fallback escalation margin, used only when no fitted model is available.
 #:
-#: Read it as: "our estimate would have to be wrong by more than 8 percentage
-#: points to flip this call." That makes the floor a statement about model
-#: error, which is measurable - once the win model is fitted and calibrated,
-#: this should be set from its observed error rather than chosen.
-ESCALATE_BELOW_MARGIN = 0.08
+#: The live value is *measured*, not chosen: `scripts/fit_win_model.py` records
+#: the fitted model's expected calibration error and stores it as
+#: `derived_escalation_margin`, which the pipeline passes in. Read it as "our
+#: estimate would have to be wrong by less than its own typical error for this
+#: call to flip" - and that typical error is now a number the model reports
+#: about itself rather than one somebody picked.
+#:
+#: The originally chosen 0.08 turned out to be within a thousandth of the
+#: measured 0.089, which is reassuring but was luck, not method.
+DEFAULT_ESCALATE_BELOW_MARGIN = 0.08
 
 #: Distance from break-even at which the engine is fully confident. Confidence
 #: is the margin scaled by this, clamped to 1.0, so the auto-file gate stays a
@@ -87,8 +91,18 @@ def evaluate(
     cfg: Settings,
     *,
     exceptions: tuple[str, ...] = (),
+    escalation_margin: float | None = None,
 ) -> Decision:
-    """Post-dispute lane. Baseline is FOLD == 0 net."""
+    """Post-dispute lane. Baseline is FOLD == 0 net.
+
+    `escalation_margin` comes from the fitted model's measured calibration
+    error. It is a parameter rather than a constant so that refitting the model
+    moves the abstention threshold automatically - a better-calibrated model
+    earns the right to decide more cases, and a worse one loses it.
+    """
+    margin_floor = (
+        escalation_margin if escalation_margin is not None else DEFAULT_ESCALATE_BELOW_MARGIN
+    )
 
     gross = round(p_win * dispute.amount)
     arbitration = round((1.0 - p_win) * cfg.vakil_arbitration_exposure)
@@ -108,17 +122,17 @@ def evaluate(
     margin = p_win - p_star
     confidence = round(min(abs(margin) / FULL_CONFIDENCE_MARGIN, 1.0), 4)
 
-    if exceptions or abs(margin) < ESCALATE_BELOW_MARGIN:
+    if exceptions or abs(margin) < margin_floor:
         return Decision(
             dispute_id=dispute.id,
             verdict=Verdict.ESCALATE,
             ev=ev,
             ce3=ce3,
             confidence=confidence,
-            rationale=_escalation_rationale(exceptions, p_win, p_star),
+            rationale=_escalation_rationale(exceptions, p_win, p_star, margin_floor),
             autofile=False,
             exceptions=exceptions
-            or (f"win estimate {p_win:.2f} within {ESCALATE_BELOW_MARGIN:.0%} of break-even "
+            or (f"win estimate {p_win:.2f} within {margin_floor:.0%} of break-even "
                 f"{p_star:.2f}",),
         )
 
@@ -193,12 +207,14 @@ def evaluate_pre_dispute(
     return verdict, ev
 
 
-def _escalation_rationale(exceptions: tuple[str, ...], p_win: float, p_star: float) -> str:
+def _escalation_rationale(
+    exceptions: tuple[str, ...], p_win: float, p_star: float, margin_floor: float
+) -> str:
     if exceptions:
         return "refusing to decide: " + "; ".join(exceptions)
     return (
         f"refusing to decide: win estimate {p_win:.0%} sits within "
-        f"{ESCALATE_BELOW_MARGIN:.0%} of the {p_star:.0%} break-even, so an error "
+        f"{margin_floor:.0%} of the {p_star:.0%} break-even, so an error "
         f"smaller than the model's own would flip the call"
     )
 

@@ -45,7 +45,7 @@ def rupees(paise: int) -> str:
     return f"Rs {paise / 100:,.0f}"
 
 
-def simulate(cases: list[Case], filing_cost: int) -> dict:
+def simulate(cases: list[Case], filing_cost: int, *, charge_arbitration: bool = False) -> dict:
     """Run every case at one filing cost and realise the outcomes.
 
     Accounting matches evals/run_eval.py: a fight that wins recovers the
@@ -54,6 +54,7 @@ def simulate(cases: list[Case], filing_cost: int) -> dict:
     the chargeback landed.
     """
     cfg = Settings(vakil_representment_cost=filing_cost)
+    exposure = cfg.vakil_arbitration_exposure if charge_arbitration else 0
 
     fights: list[Case] = []
     escalated_cases: list[Case] = []
@@ -70,7 +71,8 @@ def simulate(cases: list[Case], filing_cost: int) -> dict:
 
     def net(chosen: list[Case]) -> int:
         recovered = sum(c.dispute.amount for c in chosen if c.should_win)
-        return recovered - filing_cost * len(chosen)
+        lost = sum(1 for c in chosen if not c.should_win)
+        return recovered - filing_cost * len(chosen) - exposure * lost
 
     always_fight_net = net(cases)
     wasted = filing_cost * sum(1 for c in fights if not c.should_win)
@@ -150,6 +152,7 @@ def run(split: Path) -> dict:
         raise SystemExit(f"no cases in {split} - run `make data` first")
 
     rows = [simulate(cases, cost) for cost in COST_GRID]
+    rows_arb = [simulate(cases, cost, charge_arbitration=True) for cost in COST_GRID]
     bands = size_bands(cases)
     amounts = [c.dispute.amount for c in cases]
 
@@ -163,6 +166,8 @@ def run(split: Path) -> dict:
         "sweep": rows,
         "crossover_filing_cost": crossover(rows, robust=False),
         "crossover_filing_cost_robust": crossover(rows, robust=True),
+        "sweep_with_arbitration": rows_arb,
+        "crossover_filing_cost_robust_with_arbitration": crossover(rows_arb, robust=True),
         "by_size_at_default": by_size(cases, 25_000, bands),
         "by_size_at_manual": by_size(cases, 200_000, bands),
     }
@@ -219,6 +224,33 @@ def render(r: dict) -> str:
             else " **No robust crossover:** every apparent win disappears once escalated "
             "cases are charged to Vakil, which means the sweep is measuring abstention "
             "rather than discrimination."
+        ),
+        "",
+        "### Charging arbitration exposure",
+        "",
+        "The EV engine prices arbitration exposure into every decision, so a",
+        "scoreboard that omits it scores Vakil against a cost it was told to",
+        "avoid - and that omission penalises folding specifically. Same sweep,",
+        "with a lost representment also paying the exposure:",
+        "",
+        "| filing cost | Vakil (opt) | always-fight | uplift opt | uplift pess |",
+        "|---:|---:|---:|---:|---:|",
+    ]
+    for row in r["sweep_with_arbitration"]:
+        mark = "**" if row["robust"] else ""
+        lines.append(
+            f"| {rupees(row['filing_cost'])} | {rupees(row['vakil_net'])} | "
+            f"{rupees(row['always_fight_net'])} | "
+            f"{mark}{rupees(row['uplift_vs_always_fight'])}{mark} | "
+            f"{mark}{rupees(row['uplift_pessimistic'])}{mark} |"
+        )
+    arb_cross = r["crossover_filing_cost_robust_with_arbitration"]
+    lines += [
+        "",
+        (
+            f"**Robust crossover with arbitration charged: {rupees(arb_cross)}**"
+            if arb_cross
+            else "**No robust crossover even with arbitration charged.**"
         ),
         "",
         "## By dispute size",

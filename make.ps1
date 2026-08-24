@@ -11,7 +11,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Position = 0)]
-    [ValidateSet('help', 'install', 'data', 'fixtures', 'test', 'lint', 'eval', 'sweep', 'demo', 'verify', 'rules', 'up', 'down', 'clean')]
+    [ValidateSet('help', 'install', 'data', 'fixtures', 'fit', 'test', 'lint', 'eval', 'sweep', 'demo', 'verify', 'rules', 'up', 'down', 'clean')]
     [string]$Target = 'help',
 
     [Parameter(Position = 1)]
@@ -43,6 +43,7 @@ switch ($Target) {
         Write-Host "  .\make.ps1 install   create .venv and install dependencies"
         Write-Host "  .\make.ps1 data      regenerate the synthetic corpus (-Seed $Seed -N $N)"
         Write-Host "  .\make.ps1 fixtures  render the proof-of-delivery documents"
+        Write-Host "  .\make.ps1 fit       fit the win model on data/train"
         Write-Host "  .\make.ps1 test      run the unit tests"
         Write-Host "  .\make.ps1 eval      held-out evaluation      -> evals\report.md"
         Write-Host "  .\make.ps1 sweep     cost sensitivity sweep   -> evals\cost_sweep.md"
@@ -62,6 +63,7 @@ switch ($Target) {
 
     'data'   { Invoke-Step 'generating corpus' { & $Py data\generator\generate.py --seed $Seed --n $N } }
     'fixtures' { Invoke-Step 'rendering POD documents' { & $Py data\generator\fixtures.py --seed $Seed } }
+    'fit'    { Invoke-Step 'fitting win model' { & $Py scripts\fit_win_model.py } }
     'test'   { Invoke-Step 'running tests' { & $Py -m pytest tests -q } }
     'eval'   { Invoke-Step 'held-out evaluation' { & $Py evals\run_eval.py } }
     'sweep'  { Invoke-Step 'cost sensitivity sweep' { & $Py evals\cost_sweep.py } }

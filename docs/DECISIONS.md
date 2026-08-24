@@ -386,3 +386,102 @@ the two 13.6 refund positions and the CE 3.0 pair.
 
 Found by printing gap output for six real cases before writing any tests, which
 is worth remembering - the test suite would have encoded the bug if written first.
+
+---
+
+## D9 · The scoreboard was not charging a cost the decision was paying
+
+**24 Aug 2026 · day 6 · found by fitting the model**
+
+Fitting the win model on `data/train` improved every classification number on
+the held-out split:
+
+| | prior (unfitted) | fitted |
+|---|---:|---:|
+| precision | 0.436 | **0.700** |
+| recall | 1.000 | 0.903 |
+| F1 | 0.607 | **0.789** |
+| Brier | 0.259 | **0.175** |
+| true negatives | 0 | **12** |
+
+And made the money look *worse*: uplift versus always-fight fell from
+-Rs 50,089 to -Rs 72,983, and the robust crossover moved the wrong way,
+Rs 2,000 to Rs 2,500.
+
+Better classification producing less money is the kind of contradiction that
+usually means the measurement is wrong, so the measurement got read before the
+model did.
+
+### The bug
+
+The EV engine prices arbitration exposure - Rs 800 expected on a lost
+representment - into every decision. `evals/run_eval.py` charged **zero** for it
+in realised results, on the reasoning that leaving it out was conservative.
+
+That reasoning held only while the system fought almost everything. Once fitting
+gave the engine the discrimination to actually fold, the omission stopped being
+conservative and became a systematic penalty on folding: Vakil was declining
+cases specifically because they carried arbitration risk, and then being scored
+on a board where arbitration risk was free. Always-fight was getting 57 lost
+representments' worth of exposure written off; Vakil, fighting 40 cases, got 12.
+
+A strategy scored against a cost it was told to avoid will always look worse
+than one that ignores the cost.
+
+### The fix
+
+Both accountings are now reported side by side, in `evals/report.md` and in the
+sweep. Not one replacing the other - **both** - because switching to the
+accounting that flatters the system, immediately after seeing it flatter the
+system, is indistinguishable from moving the goalposts even when the reasoning
+is sound. Showing the pair lets a reader check the reasoning instead of trusting
+it.
+
+| | no arbitration | arbitration charged |
+|---|---:|---:|
+| uplift vs always-fight at Rs 250 | -Rs 72,983 | -Rs 36,983 |
+| robust crossover | Rs 2,500 | **Rs 1,200** |
+
+Charging the cost consistently halves the gap at Rs 250 and moves the robust
+crossover down to Rs 1,200 - which is inside the plausible range for a merchant
+doing this by hand, rather than at the top of it. D6's conclusion survives
+either way: at a genuinely automated Rs 250 marginal cost, fighting everything
+is still hard to beat.
+
+### What fitting actually produced
+
+Calibration method chosen by 5-fold cross-validation **inside** the training
+set. Isotonic lost, which is the expected outcome on 200 rows with 8% label
+noise - it had the flexibility to carve steps around individual cases and did:
+
+| calibrator | out-of-fold Brier |
+|---|---:|
+| Platt | **0.1613** |
+| none | 0.1625 |
+| isotonic | 0.1662 |
+
+The learned coefficients agree with the domain, which is the reassuring part:
+`ce3_qualified` is the strongest evidence signal at +2.15, `address_match`
++1.88, and `rc_13_3` is the most negative dispute condition at -1.36 - "not as
+described" really is close to unwinnable on documents alone.
+
+### The escalation margin is now measured
+
+D7 moved the abstention floor into probability space and set it to 8 points,
+which was a chosen number. It is now derived: the fitted model's expected
+calibration error, **0.089**, recorded in the artefact and read by the pipeline.
+Refitting moves it automatically - a better-calibrated model earns the right to
+decide more cases, a worse one loses it.
+
+The chosen 0.08 turned out to be within a thousandth of the measured value.
+That is reassuring but it was luck, and luck is not a method.
+
+### Provenance
+
+`data/model/win_model.json` is committed so evaluation is reproducible without
+a training step, and CI refits and asserts the artefact is unchanged. If the
+training data moves and the artefact does not, every reported number would
+silently describe a model that no longer exists. The model also carries its own
+`source` field into the ledger and the eval report, so a run that quietly fell
+back to the unfitted prior is identifiable after the fact rather than assumed
+away.

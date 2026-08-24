@@ -16,7 +16,7 @@ from typing import Any
 
 from vakil.config import Settings
 from vakil.decide.ev import evaluate
-from vakil.decide.win import WinFeatures, extract_features, win_probability
+from vakil.decide.win import WinFeatures, WinModel, active_model, extract_features
 from vakil.ingest.corpus import Case
 from vakil.models import CE3Result, Decision, Verdict
 from vakil.rulebook.store import EvidenceGap, Rule, Rulebook, blocking_gaps, evidence_gaps
@@ -57,6 +57,7 @@ class Assessment:
         decision: Decision,
         requirements: list[Rule],
         gaps: list[EvidenceGap],
+        model: WinModel,
     ) -> None:
         self.case = case
         self.sla = sla
@@ -66,6 +67,7 @@ class Assessment:
         self.decision = decision
         self.requirements = requirements
         self.gaps = gaps
+        self.model = model
 
     @property
     def verdict(self) -> Verdict:
@@ -82,9 +84,15 @@ class Assessment:
             "sla_tier": str(self.sla.tier),
             "hours_left": round(self.sla.hours_left, 2),
             "ce3": self.ce3.model_dump(),
-            "features": self.features.__dict__,
-            "feature_contributions": self.features.contributions(),
+            "features": self.features.as_dict(),
+            "feature_contributions": self.model.contributions(
+                self.case.dispute.reason_code, self.features
+            ),
+            "model_source": self.model.source,
             "p_win": self.p_win,
+            "p_win_uncalibrated": round(
+                self.model.raw_probability(self.case.dispute.reason_code, self.features), 4
+            ),
             "decision": self.decision.model_dump(),
             "requirements": [
                 {"rule_id": r.id, "necessity": str(r.necessity), "citation": r.citation.render()}
@@ -99,6 +107,7 @@ def assess(
     cfg: Settings,
     now: datetime,
     rulebook: Rulebook | None = None,
+    model: WinModel | None = None,
 ) -> Assessment:
     """Decide one case.
 
@@ -115,15 +124,34 @@ def assess(
     sla = deadline_clock(case.dispute.respond_by, now)
     ce3 = qualifies_ce3(case.dispute, case.bundle, case.current)
     features = extract_features(case.bundle, ce3)
-    p_win = win_probability(case.dispute, features)
+    win = model if model is not None else active_model()
+    p_win = win.probability(case.dispute.reason_code, features)
     exceptions = collect_exceptions(case, sla)
-    decision = evaluate(case.dispute, p_win, ce3, cfg, exceptions=exceptions)
+    decision = evaluate(
+        case.dispute,
+        p_win,
+        ce3,
+        cfg,
+        exceptions=exceptions,
+        escalation_margin=escalation_margin(win),
+    )
 
     book = rulebook if rulebook is not None else default_rulebook()
     requirements = book.requirements_for(case.dispute.reason_code)
     gaps = evidence_gaps(requirements, case.bundle, ce3_qualifies=ce3.qualifies)
 
-    return Assessment(case, sla, ce3, features, p_win, decision, requirements, gaps)
+    return Assessment(case, sla, ce3, features, p_win, decision, requirements, gaps, win)
+
+
+def escalation_margin(model: WinModel) -> float | None:
+    """The margin the fitted model measured about itself.
+
+    None when the model carries no such measurement - an unfitted prior has no
+    business asserting how wrong it usually is, so `evaluate` falls back to its
+    documented default rather than inventing a number.
+    """
+    value = model.metadata.get("derived_escalation_margin")
+    return float(value) if isinstance(value, (int, float)) else None
 
 
 @lru_cache(maxsize=1)

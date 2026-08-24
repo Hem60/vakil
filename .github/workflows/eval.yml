@@ -48,6 +48,16 @@ jobs:
           git diff --exit-code data/test/MANIFEST.json \
             || (echo "::error::held-out split changed; update the manifest deliberately" && exit 1)
 
+      - name: Refit the win model
+        run: python scripts/fit_win_model.py
+
+      - name: Assert the committed model matches a refit
+        # The model artefact is committed so evaluation is reproducible without
+        # a training step. If training data changes and the artefact does not,
+        # every reported number silently describes a model that no longer exists.
+        run: |
+          git diff --exit-code data/model/win_model.json \n            || (echo "::error::committed win model is stale; run make fit and commit" && exit 1)
+
       - name: Held-out evaluation
         run: python evals/run_eval.py --fail-under-f1 0.60
 

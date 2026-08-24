@@ -1,0 +1,62 @@
+{
+  "source": "fitted",
+  "intercept": -2.640427659099258,
+  "coefficients": {
+    "ce3_qualified": 2.150253,
+    "signed_delivery_proof": 0.825156,
+    "delivery_proof_unsigned": -0.41221,
+    "address_match": 1.880783,
+    "device_match": 1.352424,
+    "support_thread_present": 0.61025,
+    "policy_available": 0.338363,
+    "refund_already_issued": 0.834419,
+    "evidence_completeness": 0.265128,
+    "rc_10_4": -0.225311,
+    "rc_13_1": 0.608948,
+    "rc_13_3": -1.357216,
+    "rc_13_2": 0.772106,
+    "rc_13_6": -0.855909,
+    "rc_12_6": 1.039422
+  },
+  "calibration": {
+    "method": "platt",
+    "a": 1.5358264640295003,
+    "b": 0.059706702901627724
+  },
+  "feature_names": [
+    "ce3_qualified",
+    "signed_delivery_proof",
+    "delivery_proof_unsigned",
+    "address_match",
+    "device_match",
+    "support_thread_present",
+    "policy_available",
+    "refund_already_issued",
+    "evidence_completeness",
+    "rc_10_4",
+    "rc_13_1",
+    "rc_13_3",
+    "rc_13_2",
+    "rc_13_6",
+    "rc_12_6"
+  ],
+  "metadata": {
+    "train_rows": 200,
+    "train_positives": 94,
+    "l2": 1.0,
+    "iterations": 4000,
+    "cv_folds": 5,
+    "cv_brier_out_of_fold": {
+      "none": 0.1625,
+      "platt": 0.1613,
+      "isotonic": 0.1662
+    },
+    "calibration_chosen": "platt",
+    "train_brier_raw": 0.1358,
+    "train_brier_calibrated": 0.1272,
+    "train_log_loss": 0.4151,
+    "train_expected_calibration_error": 0.0888,
+    "derived_escalation_margin": 0.089,
+    "warning": "Every train_* figure is measured on data the model was fitted on. Held-out numbers live in evals/report.md."
+  }
+}
