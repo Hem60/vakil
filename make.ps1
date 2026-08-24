@@ -11,8 +11,11 @@
 [CmdletBinding()]
 param(
     [Parameter(Position = 0)]
-    [ValidateSet('help', 'install', 'data', 'test', 'lint', 'eval', 'sweep', 'demo', 'verify', 'up', 'down', 'clean')]
+    [ValidateSet('help', 'install', 'data', 'test', 'lint', 'eval', 'sweep', 'demo', 'verify', 'rules', 'up', 'down', 'clean')]
     [string]$Target = 'help',
+
+    [Parameter(Position = 1)]
+    [string]$Arg,
 
     [int]$Seed = 20260824,
     [int]$N = 300
@@ -44,6 +47,7 @@ switch ($Target) {
         Write-Host "  .\make.ps1 sweep     cost sensitivity sweep   -> evals\cost_sweep.md"
         Write-Host "  .\make.ps1 demo      assess one case, then verify the audit chain"
         Write-Host "  .\make.ps1 verify    walk the audit chain"
+        Write-Host "  .\make.ps1 rules 13.1  what the networks require, with citations"
         Write-Host "  .\make.ps1 up/down   start/stop postgres + api + web"
         Write-Host "  .\make.ps1 clean     remove caches and generated reports"
         Write-Host ""
@@ -60,6 +64,7 @@ switch ($Target) {
     'eval'   { Invoke-Step 'held-out evaluation' { & $Py evals\run_eval.py } }
     'sweep'  { Invoke-Step 'cost sensitivity sweep' { & $Py evals\cost_sweep.py } }
     'verify' { Invoke-Step 'verifying audit chain' { & $Py -m vakil.cli verify } }
+    'rules'  { if ($Arg) { & $Py -m vakil.cli rules $Arg } else { & $Py -m vakil.cli rules } }
 
     'demo' {
         if (Test-Path ledger.jsonl) { Remove-Item ledger.jsonl }

@@ -16,10 +16,11 @@ from rich.table import Table
 
 from vakil.config import settings
 from vakil.decide.ev import breakeven_probability
-from vakil.decide.pipeline import assess
+from vakil.decide.pipeline import assess, default_rulebook
 from vakil.ingest.corpus import load_case
 from vakil.ledger.chain import Ledger
-from vakil.models import Verdict
+from vakil.models import ReasonCode, Verdict
+from vakil.rulebook.search import BM25Retriever
 
 app = typer.Typer(add_completion=False, help="Chargeback defence agent.")
 console = Console()
@@ -76,6 +77,19 @@ def assess_case(
     table.add_row("net EV", _r(ev.net_ev))
     console.print(table)
 
+    if result.gaps:
+        gaps_table = Table(title="Evidence the network wants but we lack", header_style="dim")
+        gaps_table.add_column("necessity")
+        gaps_table.add_column("missing")
+        gaps_table.add_column("rule")
+        for gap in result.gaps:
+            marker = " [dim](excused by CE 3.0)[/dim]" if gap.excused_by else ""
+            gaps_table.add_row(
+                str(gap.necessity), ", ".join(gap.missing_fields), gap.title + marker
+            )
+        console.print(gaps_table)
+        console.print(f"[dim]cited: {result.gaps[0].citation.render()}[/dim]")
+
     style = VERDICT_STYLE.get(d.verdict, "bold")
     console.print(
         f"\n[{style}]{d.verdict}[/{style}]  confidence {d.confidence:.2f}  "
@@ -108,6 +122,44 @@ def replay(
     for event in Ledger(ledger_path).replay(dispute_id):
         console.print(f"[dim]{event['at']}[/dim] [bold]{event['stage']}[/bold]")
         console.print_json(data=event["payload"])
+
+
+@app.command()
+def rules(
+    reason_code: str = typer.Argument(None, help="e.g. 13.1; omit to list coverage"),
+    query: str = typer.Option(None, "--search", help="free-text search over the rulebook"),
+) -> None:
+    """Show what the networks require for a dispute condition, with citations."""
+    book = default_rulebook()
+
+    if query:
+        code = ReasonCode(reason_code) if reason_code else None
+        for hit in BM25Retriever(book).search(query, reason_code=code):
+            console.print(f"[dim]{hit.score:6.2f}[/dim]  {hit.rule.title}")
+            console.print(f"         [dim]{hit.rule.citation.render()}[/dim]")
+        return
+
+    if not reason_code:
+        coverage = book.coverage()
+        console.print(
+            f"{coverage['rules']} rules, "
+            f"[bold]{coverage['verified']}[/bold] checked against public documentation, "
+            f"[yellow]{coverage['unverified']}[/yellow] awaiting review against a licensed rulebook"
+        )
+        console.print(f"reason codes covered: {', '.join(coverage['reason_codes_covered'])}")
+        return
+
+    table = Table(title=f"Requirements for {reason_code}", header_style="dim")
+    table.add_column("necessity")
+    table.add_column("requirement")
+    table.add_column("evidence field")
+    for rule in book.requirements_for(ReasonCode(reason_code)):
+        mark = "" if rule.verified else " [yellow]*[/yellow]"
+        table.add_row(
+            str(rule.necessity), rule.title + mark, ", ".join(rule.evidence_fields) or "-"
+        )
+    console.print(table)
+    console.print("[yellow]*[/yellow] [dim]not yet checked against a licensed rulebook[/dim]")
 
 
 if __name__ == "__main__":

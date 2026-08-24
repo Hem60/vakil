@@ -71,6 +71,18 @@ raw body before the payload is parsed — an unsigned dispute event is an
 instruction from a stranger to spend money.
 
 ### 2 · Triage
+Reason code to requirements is a **deterministic lookup, not a retrieval.** The
+mapping is twenty cited rows; putting a vector search between a dispute and the
+evidence the network demands would place approximation where a table is exact.
+Semantic search exists (BM25, `rulebook/search.py`) but serves only the drafting
+stage's open-ended questions, and filters by reason code rather than boosting,
+because a citation to the wrong dispute condition is worse than no citation.
+
+Gap analysis then compares what the condition requires against what the harvest
+found, mapping both onto Razorpay evidence field names. Gaps inform the drafting
+stage and the console; they do not gate the decision, because a human cannot
+conjure a missing delivery receipt either.
+
 Two pure functions. Reason code determines which evidence the network will
 accept, and getting it wrong wastes the case. SLA tier determines how much work
 the pipeline is allowed to do: under 12 hours it skips optional document parsing
@@ -158,7 +170,7 @@ docker compose up
 | `vakil.models` | domain types; money is always integer paise | no |
 | `vakil.ingest` | webhook parsing, corpus loader | no |
 | `vakil.rules` | deadlines, CE 3.0 qualifier | no |
-| `vakil.rulebook` | RAG over network rulebooks, with citations | yes |
+| `vakil.rulebook` | cited requirements lookup + BM25 search + gap analysis | no |
 | `vakil.evidence` | connectors, document extraction | yes |
 | `vakil.decide` | win model, EV engine, pipeline | no |
 | `vakil.draft` | letter generation; provenance gate | generation only |

@@ -299,3 +299,90 @@ than the optimistic one (+Rs 16,304 vs +Rs 3,722). That inverts because escalate
 cases now contain genuine winners a human would profitably fight, rather than the
 systematically hopeless ones the old floor was dumping. Escalation has become a
 signal about ambiguity instead of a symptom of the cost assumption.
+
+---
+
+## D8 · The rulebooks are proprietary, so the corpus is summaries with citations
+
+**24 Aug 2026 · day 3**
+
+The plan said "rulebook RAG with citations". Building it ran into the obvious
+problem: **Visa Core Rules, the VCR dispute-condition guide and the Mastercard
+chargeback guide are licensed documents.** They are not public, and reproducing
+them in a public GitHub repository is not something a payments company would
+want to see in a submission.
+
+Three options were available:
+
+1. Scrape whatever fragments are floating around and embed them. Fast, and
+   wrong - it puts copyrighted text in the repo and cites summaries of summaries.
+2. Skip the rulebook entirely and hard-code requirements in Python. Honest about
+   provenance but unciteable, and a requirement without a source is an assertion
+   this system is not entitled to make.
+3. Author short requirement summaries, each carrying a citation to the rule it
+   summarises, and mark every one unverified until checked against a licensed
+   copy.
+
+**Chose 3.** `data/rulebook/*.json` holds 20 entries across all six dispute
+conditions plus India-specific context. Each has a `citation` with document,
+section and URL, and a `verified` flag. Three are `verified=true` because they
+come from Razorpay's public documentation; **17 are `verified=false`**, and
+`vakil rules` and the eval report both print that count rather than burying it.
+
+A real deployment licenses the rulebooks. Saying so is more credible than
+pretending twenty hand-written summaries are the Visa Core Rules.
+
+### The retrieval decision that matters more
+
+Reason code to requirements is a **deterministic lookup, not a retrieval.**
+
+Putting a vector search between a dispute and the evidence the network demands
+would place approximation where a table is exact - and it is the same category
+of error as letting the model decide the verdict. The mapping is 20 rows. It
+does not need embeddings; it needs to be right every time and to cite its source.
+
+Semantic search does exist, in `rulebook/search.py`, and it serves one narrow
+purpose: the drafting stage asking open-ended questions like "what bears on a
+delivery to a different address". It filters by reason code rather than boosting,
+because a citation to the wrong dispute condition is worse than no citation.
+
+The backend is **BM25 over twenty short entries**, in pure Python, no API key and
+no database. That is not a placeholder for something better - on a corpus this
+size lexical scoring is not obviously worse than dense retrieval, and Anthropic
+ships no embeddings API, so "proper RAG" means adding a separate provider and a
+real dependency for a corpus that fits on one screen. The `Retriever` protocol
+makes it a drop-in when the corpus grows enough to justify it. The pgvector table
+in `scripts/init.sql` is provisioned and deliberately unused.
+
+Calling this "RAG" would be generous. It is a cited lookup table plus a small
+lexical index, which is what the problem actually needs.
+
+### Gaps inform, they do not gate
+
+Gap analysis compares what a dispute condition requires against what the harvest
+actually found, and maps both onto Razorpay's evidence field names -
+`shipping_proof`, `refund_confirmation`, and so on. That bridge is the useful
+part: a network requirement on one side, an API field on the other.
+
+The temptation was to escalate any case missing required evidence. Resisted: a
+human cannot conjure a delivery receipt either, and that would refill the queue
+D7 just drained. A missing document lowers the win probability and the EV engine
+folds on its own. Gaps go to the drafting stage, which must not claim what is not
+held, and to the console, which can go and look.
+
+Held-out metrics are unchanged by this commit, which is the correct outcome for a
+change that adds information without moving a decision boundary.
+
+### One bug worth recording
+
+The first version marked both `visa-13.1-proof-of-delivery` and
+`visa-13.1-proof-of-service` as `required` for non-delivery disputes. They are
+mutually exclusive - a physical shipment cannot produce a service access log -
+so every 13.1 case reported a gap no merchant could ever close.
+
+Fixed with an alternative `group`: rules sharing a group satisfy each other, and
+the group is closed as soon as any member is satisfied. Same mechanism now covers
+the two 13.6 refund positions and the CE 3.0 pair.
+
+Found by printing gap output for six real cases before writing any tests, which
+is worth remembering - the test suite would have encoded the bug if written first.

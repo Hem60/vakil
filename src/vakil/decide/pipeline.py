@@ -11,12 +11,14 @@ Vakil and they live elsewhere. Nothing in this module can hallucinate.
 from __future__ import annotations
 
 from datetime import datetime
+from functools import lru_cache
 
 from vakil.config import Settings
 from vakil.decide.ev import evaluate
 from vakil.decide.win import WinFeatures, extract_features, win_probability
 from vakil.ingest.corpus import Case
 from vakil.models import CE3Result, Decision, Verdict
+from vakil.rulebook.store import EvidenceGap, Rule, Rulebook, blocking_gaps, evidence_gaps
 from vakil.rules.ce3 import qualifies_ce3
 from vakil.rules.deadlines import SLA, deadline_clock
 
@@ -52,6 +54,8 @@ class Assessment:
         features: WinFeatures,
         p_win: float,
         decision: Decision,
+        requirements: list[Rule],
+        gaps: list[EvidenceGap],
     ) -> None:
         self.case = case
         self.sla = sla
@@ -59,10 +63,16 @@ class Assessment:
         self.features = features
         self.p_win = p_win
         self.decision = decision
+        self.requirements = requirements
+        self.gaps = gaps
 
     @property
     def verdict(self) -> Verdict:
         return self.decision.verdict
+
+    @property
+    def blocking(self) -> list[EvidenceGap]:
+        return blocking_gaps(self.gaps)
 
     def to_ledger_payload(self) -> dict:
         return {
@@ -75,14 +85,48 @@ class Assessment:
             "feature_contributions": self.features.contributions(),
             "p_win": self.p_win,
             "decision": self.decision.model_dump(),
+            "requirements": [
+                {"rule_id": r.id, "necessity": str(r.necessity), "citation": r.citation.render()}
+                for r in self.requirements
+            ],
+            "evidence_gaps": [g.model_dump() for g in self.gaps],
         }
 
 
-def assess(case: Case, cfg: Settings, now: datetime) -> Assessment:
+def assess(
+    case: Case,
+    cfg: Settings,
+    now: datetime,
+    rulebook: Rulebook | None = None,
+) -> Assessment:
+    """Decide one case.
+
+    Still a pure function of its arguments - the rulebook is passed in rather
+    than loaded, so the eval harness and `replay` stay exact.
+
+    **Evidence gaps inform; they do not gate.** A missing required document
+    lowers the win probability, and the EV engine folds on its own if the case
+    cannot be argued. Escalating every case with a gap would flood the human
+    queue with cases a human cannot fix either - the exact failure D7 removed.
+    Gaps are surfaced to the drafting stage, which must not claim what is not
+    held, and to the merchant console, which can go and look for the document.
+    """
     sla = deadline_clock(case.dispute.respond_by, now)
     ce3 = qualifies_ce3(case.dispute, case.bundle, case.current)
     features = extract_features(case.bundle, ce3)
     p_win = win_probability(case.dispute, features)
     exceptions = collect_exceptions(case, sla)
     decision = evaluate(case.dispute, p_win, ce3, cfg, exceptions=exceptions)
-    return Assessment(case, sla, ce3, features, p_win, decision)
+
+    book = rulebook if rulebook is not None else default_rulebook()
+    requirements = book.requirements_for(case.dispute.reason_code)
+    gaps = evidence_gaps(requirements, case.bundle, ce3_qualifies=ce3.qualifies)
+
+    return Assessment(case, sla, ce3, features, p_win, decision, requirements, gaps)
+
+
+@lru_cache(maxsize=1)
+def default_rulebook() -> Rulebook:
+    """Loaded once. The corpus is static at runtime; re-reading twenty JSON
+    entries per dispute would be waste, not caution."""
+    return Rulebook.load()

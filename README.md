@@ -17,19 +17,19 @@ the time; structured evidence pushes past 50%. That gap is the product.
 
 ## Status
 
-Day 1 of 12. The deterministic core, the corpus, and the evaluation harness are
-built and running. The model-bearing stages are not yet wired.
+Day 3 of 12. The deterministic core, the corpus, the evaluation harness and the
+cited rulebook are built and running. The model-bearing stages are not yet wired.
 
 | | |
 |---|---|
-| ✅ Domain models, deadline rules, CE 3.0 qualifier | 45 tests passing |
+| ✅ Domain models, deadline rules, CE 3.0 qualifier | 64 tests passing |
 | ✅ Fight-or-Fold expected-value engine | two lanes; break-even margin gating |
 | ✅ Synthetic corpus, 300 cases, held-out split frozen | sha256 `a67456b827d7fe3d` |
 | ✅ Held-out evaluation harness | `evals/report.md`, runs in CI |
 | ✅ Cost sensitivity sweep, both accounting bounds | `evals/cost_sweep.md` |
 | ✅ Hash-chained audit ledger with replay + verify | tamper detection tested |
 | ✅ Mock Razorpay Disputes/Documents API | filing path has something to file against |
-| ⬜ Rulebook RAG with citations | day 3 |
+| ✅ Cited rulebook + evidence-gap analysis | 20 rules, all 6 dispute conditions |
 | ⬜ Document extraction (Docling/VLM) | day 5 |
 | ⬜ Win-model fit + calibration | day 6 |
 | ⬜ Rebuttal drafting + provenance gate | day 7 |
@@ -85,7 +85,7 @@ Linux / macOS:
 ```bash
 make install      # venv + dependencies
 make data         # regenerate the 300-case corpus from seed
-make test         # 45 unit tests
+make test         # 64 unit tests
 make eval         # held-out evaluation -> evals/report.md
 make sweep        # cost sensitivity   -> evals/cost_sweep.md
 make demo         # assess one case, then verify the audit chain
@@ -148,7 +148,7 @@ Claude reads scanned delivery proofs and writes the rebuttal. Triage, CE 3.0
 qualification, the EV arithmetic, and the audit chain are ordinary Python with
 unit tests. Nothing in `vakil.decide` can hallucinate.
 
-Four things here that are not in the other submissions:
+Five things here that are not in the other submissions:
 
 1. **Fight-or-Fold.** Everyone assumes "always fight". Fighting costs money and
    spends dispute-ratio headroom. Two cases with identical odds and different
@@ -159,6 +159,20 @@ Four things here that are not in the other submissions:
    ≥2 matching identifiers. 40 lines, 9 tests, every rejection names its clause.
 4. **Hash-chained ledger.** `vakil verify` walks the chain; editing or deleting
    any historical record breaks it, and `replay` refuses to run on broken history.
+5. **Cited requirements, and the gap between them and reality.** Every dispute
+   condition maps to what the network requires, each with a citation, and each
+   mapped onto the Razorpay evidence field that would satisfy it. `vakil rules
+   13.1` prints it. The gap analysis says what the merchant does not hold.
+
+```powershell
+.\make.ps1 rules 13.1      # what Visa requires for a non-delivery dispute
+```
+
+Card network rulebooks are **licensed documents** and are not reproduced here.
+`data/rulebook/` holds short summaries written for this project, each citing the
+rule it summarises. 17 of 20 are marked unverified pending review against a
+licensed copy, and both the CLI and the eval report print that count. A real
+deployment licenses the rulebooks. See [D8](docs/DECISIONS.md).
 
 Full walkthrough: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 

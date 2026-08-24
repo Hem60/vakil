@@ -2,7 +2,7 @@ PY ?= .venv/Scripts/python.exe
 SEED ?= 20260824
 N ?= 300
 
-.PHONY: help install data eval sweep test lint demo verify clean up down
+.PHONY: help install data eval sweep test lint demo verify rules clean up down
 
 help:
 	@echo "make install   create .venv and install dependencies"
@@ -11,6 +11,7 @@ help:
 	@echo "make eval      run the held-out evaluation, write evals/report.md"
 	@echo "make sweep     cost sensitivity sweep, write evals/cost_sweep.md"
 	@echo "make demo      assess one case end to end and verify the audit chain"
+	@echo "make rules CODE=13.1   what the networks require, with citations"
 	@echo "make up/down   start/stop postgres + api + web"
 
 install:
@@ -41,6 +42,9 @@ demo:
 
 verify:
 	PYTHONPATH=src $(PY) -m vakil.cli verify
+
+rules:
+	PYTHONPATH=src $(PY) -m vakil.cli rules $(CODE)
 
 up:
 	docker compose up -d

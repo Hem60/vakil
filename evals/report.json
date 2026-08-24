@@ -275,8 +275,31 @@
       }
     ]
   },
+  "rulebook": {
+    "rules": 20,
+    "verified": 3,
+    "unverified": 17,
+    "verified_fraction": 0.15,
+    "reason_codes_covered": [
+      "10.4",
+      "12.6",
+      "13.1",
+      "13.2",
+      "13.3",
+      "13.6"
+    ],
+    "reason_codes_missing": [],
+    "cases_with_blocking_gaps": 31,
+    "missing_field_counts": {
+      "shipping_proof": 19,
+      "customer_communication": 6,
+      "refund_confirmation": 5,
+      "term_and_conditions": 1,
+      "refund_cancellation_policy": 1
+    }
+  },
   "throughput": {
-    "cases_per_second": 51036.0,
-    "seconds": 0.002
+    "cases_per_second": 27846.6,
+    "seconds": 0.004
   }
 }

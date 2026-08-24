@@ -66,6 +66,22 @@ Uplift vs always-fight Rs -50,089 | vs always-fold Rs 210,857
 - `case_0104` (13.6): response deadline passed 94.0h ago
 - `case_0107` (12.6): response deadline passed 11.0h ago
 
-Throughput: 51036.0 cases/sec (decision path only, no model calls).
+## Rulebook coverage
+
+20 cited requirements across 6 dispute conditions. **17 of 20 are authored summaries not yet checked against a licensed rulebook** - Visa and Mastercard rulebooks are proprietary and are not reproduced in this repository.
+
+31 of 100 cases are missing evidence the network requires. Most commonly:
+
+| evidence field | cases missing it |
+|---|---:|
+| `shipping_proof` | 19 |
+| `customer_communication` | 6 |
+| `refund_confirmation` | 5 |
+| `term_and_conditions` | 1 |
+| `refund_cancellation_policy` | 1 |
+
+Gaps inform but do not gate: a missing document lowers the win probability and the EV engine folds on its own. Escalating every case with a gap would flood the human queue with cases a human cannot fix either.
+
+Throughput: 27846.6 cases/sec (decision path only, no model calls).
 
 > Synthetic corpus. See docs/DATA-CARD.md for how it was built and what it cannot tell you.

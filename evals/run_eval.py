@@ -6,8 +6,11 @@ Runs the full decision path over data/test and reports six things:
   2. calibration - does "70%" actually win 70% of the time (Brier + bins)
   3. false-positive cost in rupees: money burned fighting cases that lost
   4. net recovery vs BOTH baselines, always-fight and always-fold
-  5. throughput
-  6. the exception list - cases the system refused to decide, and why
+  5. rulebook coverage and evidence gaps - what the networks require that
+     this merchant does not hold, and how much of the rulebook corpus is still
+     unverified against a licensed copy
+  6. throughput
+  7. the exception list - cases the system refused to decide, and why
 
 Accounting is deliberately conservative. A fight that wins recovers the
 disputed amount and pays the filing cost; a fight that loses pays the filing
@@ -31,7 +34,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from vakil.config import Settings  # noqa: E402
-from vakil.decide.pipeline import assess  # noqa: E402
+from vakil.decide.pipeline import assess, default_rulebook  # noqa: E402
 from vakil.ingest.corpus import load_split  # noqa: E402
 from vakil.models import Verdict  # noqa: E402
 
@@ -143,8 +146,16 @@ def run(split: Path) -> dict:
     started = time.perf_counter()
     rows = []
     exceptions = []
+    gap_fields: dict[str, int] = {}
+    cases_with_blocking_gaps = 0
     for case in cases:
         a = assess(case, cfg, EVAL_NOW)
+        blocking = a.blocking
+        if blocking:
+            cases_with_blocking_gaps += 1
+        for gap in blocking:
+            for field in gap.missing_fields:
+                gap_fields[field] = gap_fields.get(field, 0) + 1
         rows.append(
             {
                 "case_id": case.case_id,
@@ -188,6 +199,13 @@ def run(split: Path) -> dict:
         "money_paise": money(rows, cfg),
         "by_reason_code": by_reason,
         "escalations": {"n": len(exceptions), "cases": exceptions[:25]},
+        "rulebook": {
+            **default_rulebook().coverage(),
+            "cases_with_blocking_gaps": cases_with_blocking_gaps,
+            "missing_field_counts": dict(
+                sorted(gap_fields.items(), key=lambda kv: -kv[1])
+            ),
+        },
         "throughput": {
             "cases_per_second": round(len(rows) / elapsed, 1),
             "seconds": round(elapsed, 3),
@@ -268,7 +286,31 @@ def render(report: dict) -> str:
     for e in report["escalations"]["cases"][:10]:
         lines.append(f"- `{e['case_id']}` ({e['reason_code']}): {'; '.join(e['why'])}")
 
+    rb = report["rulebook"]
     lines += [
+        "",
+        "## Rulebook coverage",
+        "",
+        f"{rb['rules']} cited requirements across "
+        f"{len(rb['reason_codes_covered'])} dispute conditions. "
+        f"**{rb['unverified']} of {rb['rules']} are authored summaries not yet checked "
+        f"against a licensed rulebook** - Visa and Mastercard rulebooks are proprietary "
+        f"and are not reproduced in this repository.",
+        "",
+        f"{rb['cases_with_blocking_gaps']} of {report['n']} cases are missing evidence the "
+        "network requires. Most commonly:",
+        "",
+        "| evidence field | cases missing it |",
+        "|---|---:|",
+    ]
+    for field, count in list(rb["missing_field_counts"].items())[:8]:
+        lines.append(f"| `{field}` | {count} |")
+
+    lines += [
+        "",
+        "Gaps inform but do not gate: a missing document lowers the win probability and "
+        "the EV engine folds on its own. Escalating every case with a gap would flood the "
+        "human queue with cases a human cannot fix either.",
         "",
         f"Throughput: {report['throughput']['cases_per_second']} cases/sec "
         f"(decision path only, no model calls).",

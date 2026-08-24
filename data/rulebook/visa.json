@@ -1,0 +1,267 @@
+{
+  "network": "visa",
+  "source_note": "Authored requirement summaries, not rulebook text. Visa Core Rules and the VCR dispute-condition guide are proprietary and are not reproduced here. Each entry cites the rule it summarises so a licensed copy can be checked against it. Every entry carries verified=false until reviewed against a licensed rulebook.",
+  "rules": [
+    {
+      "id": "visa-ce3-prior-undisputed",
+      "reason_code": "10.4",
+      "title": "Compelling Evidence 3.0 - prior undisputed transactions",
+      "requirement": "Two or more prior transactions by the same cardholder that were not disputed, settled at least 120 days and no more than 365 days before the disputed transaction.",
+      "evidence_fields": [
+        "others"
+      ],
+      "necessity": "alternative",
+      "note": "Qualification is checked deterministically in vakil.rules.ce3, not inferred. When it qualifies the issuer is obliged to accept the evidence, which is why it dominates the win model.",
+      "citation": {
+        "document": "Visa Compelling Evidence 3.0, dispute condition 10.4",
+        "section": "CE 3.0 qualification criteria",
+        "url": "https://corepay.net/articles/visa-compelling-evidence-3-0-ultimate-guide/"
+      },
+      "verified": false,
+      "group": "10.4-ce3"
+    },
+    {
+      "id": "visa-ce3-identifier-match",
+      "reason_code": "10.4",
+      "title": "Compelling Evidence 3.0 - matching identifiers",
+      "requirement": "At least two identifiers must match across the qualifying prior transactions and the disputed one: device ID, IP address, shipping address, or account/login ID.",
+      "evidence_fields": [
+        "others",
+        "access_activity_log"
+      ],
+      "necessity": "alternative",
+      "note": "A missing identifier never counts as a match. Absence of evidence must not be scored as agreement.",
+      "citation": {
+        "document": "Visa Compelling Evidence 3.0, dispute condition 10.4",
+        "section": "Qualifying identifier match",
+        "url": "https://corepay.net/articles/visa-compelling-evidence-3-0-ultimate-guide/"
+      },
+      "verified": false,
+      "group": "10.4-ce3"
+    },
+    {
+      "id": "visa-10.4-delivery-to-cardholder",
+      "reason_code": "10.4",
+      "title": "Delivery to the cardholder's address",
+      "requirement": "Proof that the goods were delivered to the address on the order, ideally signed for by the cardholder.",
+      "evidence_fields": [
+        "shipping_proof"
+      ],
+      "necessity": "required",
+      "citation": {
+        "document": "Visa Core Rules, dispute condition 10.4",
+        "section": "Card-absent fraud - merchant remedies",
+        "url": "https://razorpay.com/docs/payments/disputes/submit-evidence/"
+      },
+      "verified": false
+    },
+    {
+      "id": "visa-10.4-transaction-record",
+      "reason_code": "10.4",
+      "title": "Transaction and order record",
+      "requirement": "The order record showing what was purchased, when, for how much, and to which billing and shipping addresses.",
+      "evidence_fields": [
+        "billing_proof"
+      ],
+      "necessity": "required",
+      "citation": {
+        "document": "Visa Core Rules, dispute condition 10.4",
+        "section": "Card-absent fraud - merchant remedies",
+        "url": "https://razorpay.com/docs/payments/disputes/submit-evidence/"
+      },
+      "verified": false
+    },
+    {
+      "id": "visa-13.1-proof-of-delivery",
+      "reason_code": "13.1",
+      "title": "Proof of delivery",
+      "requirement": "Carrier documentation showing the merchandise was delivered, with the delivery date and the address it was delivered to. A signature strengthens the case considerably.",
+      "evidence_fields": [
+        "shipping_proof"
+      ],
+      "necessity": "required",
+      "note": "The delivery address must match the order. A delivery to a different address is worse than no delivery proof, because it corroborates the cardholder.",
+      "citation": {
+        "document": "Visa Core Rules, dispute condition 13.1",
+        "section": "Merchandise or services not received",
+        "url": "https://razorpay.com/docs/payments/disputes/submit-evidence/"
+      },
+      "verified": false,
+      "group": "13.1-fulfilment-proof"
+    },
+    {
+      "id": "visa-13.1-proof-of-service",
+      "reason_code": "13.1",
+      "title": "Proof of service for non-physical goods",
+      "requirement": "Where nothing is shipped, evidence the service was provided or the digital goods accessed - login records, usage logs, or download confirmations.",
+      "evidence_fields": [
+        "proof_of_service",
+        "access_activity_log"
+      ],
+      "necessity": "required",
+      "note": "Applies instead of shipping_proof when the order contains no physical item.",
+      "citation": {
+        "document": "Visa Core Rules, dispute condition 13.1",
+        "section": "Merchandise or services not received",
+        "url": "https://razorpay.com/docs/payments/disputes/submit-evidence/"
+      },
+      "verified": false,
+      "group": "13.1-fulfilment-proof"
+    },
+    {
+      "id": "visa-13.2-cancellation-terms",
+      "reason_code": "13.2",
+      "title": "Cancellation terms disclosed at purchase",
+      "requirement": "The recurring-billing terms and cancellation policy as they were presented to the cardholder at the time of purchase.",
+      "evidence_fields": [
+        "term_and_conditions",
+        "refund_cancellation_policy"
+      ],
+      "necessity": "required",
+      "citation": {
+        "document": "Visa Core Rules, dispute condition 13.2",
+        "section": "Cancelled recurring transaction",
+        "url": "https://razorpay.com/docs/payments/disputes/submit-evidence/"
+      },
+      "verified": false
+    },
+    {
+      "id": "visa-13.2-no-cancellation-received",
+      "reason_code": "13.2",
+      "title": "Evidence no cancellation was received",
+      "requirement": "Records showing the cardholder did not cancel before the disputed billing date, or cancelled after it.",
+      "evidence_fields": [
+        "customer_communication",
+        "access_activity_log"
+      ],
+      "necessity": "required",
+      "citation": {
+        "document": "Visa Core Rules, dispute condition 13.2",
+        "section": "Cancelled recurring transaction",
+        "url": "https://razorpay.com/docs/payments/disputes/submit-evidence/"
+      },
+      "verified": false
+    },
+    {
+      "id": "visa-13.3-item-as-described",
+      "reason_code": "13.3",
+      "title": "Description matching what was supplied",
+      "requirement": "The product listing as it appeared at the time of purchase, alongside evidence of what was actually shipped.",
+      "evidence_fields": [
+        "billing_proof",
+        "shipping_proof"
+      ],
+      "necessity": "required",
+      "note": "Rarely decisive. The cardholder's judgement of quality is subjective and documents seldom rebut it, which is why the win model prices 13.3 lowest.",
+      "citation": {
+        "document": "Visa Core Rules, dispute condition 13.3",
+        "section": "Not as described or defective merchandise",
+        "url": "https://razorpay.com/docs/payments/disputes/submit-evidence/"
+      },
+      "verified": false
+    },
+    {
+      "id": "visa-13.3-return-policy",
+      "reason_code": "13.3",
+      "title": "Return policy and whether it was followed",
+      "requirement": "The return policy in force on the purchase date, and evidence of whether the cardholder attempted a return within it.",
+      "evidence_fields": [
+        "refund_cancellation_policy",
+        "customer_communication"
+      ],
+      "necessity": "supporting",
+      "citation": {
+        "document": "Visa Core Rules, dispute condition 13.3",
+        "section": "Not as described or defective merchandise",
+        "url": "https://razorpay.com/docs/payments/disputes/submit-evidence/"
+      },
+      "verified": false
+    },
+    {
+      "id": "visa-13.6-refund-processed",
+      "reason_code": "13.6",
+      "title": "Proof the credit was processed",
+      "requirement": "Confirmation that the refund was issued, with the date, amount and destination.",
+      "evidence_fields": [
+        "refund_confirmation"
+      ],
+      "necessity": "required",
+      "note": "Close to decisive when present, and close to hopeless when absent. There is no argument to make if the credit genuinely was not processed.",
+      "citation": {
+        "document": "Visa Core Rules, dispute condition 13.6",
+        "section": "Credit not processed",
+        "url": "https://razorpay.com/docs/payments/disputes/submit-evidence/"
+      },
+      "verified": false,
+      "group": "13.6-refund-position"
+    },
+    {
+      "id": "visa-13.6-refund-policy-disclosed",
+      "reason_code": "13.6",
+      "title": "Refund policy disclosed at purchase",
+      "requirement": "Where no refund was owed, the policy as disclosed to the cardholder showing the sale was final.",
+      "evidence_fields": [
+        "refund_cancellation_policy",
+        "term_and_conditions"
+      ],
+      "necessity": "alternative",
+      "citation": {
+        "document": "Visa Core Rules, dispute condition 13.6",
+        "section": "Credit not processed",
+        "url": "https://razorpay.com/docs/payments/disputes/submit-evidence/"
+      },
+      "verified": false,
+      "group": "13.6-refund-position"
+    },
+    {
+      "id": "visa-12.6-distinct-transactions",
+      "reason_code": "12.6",
+      "title": "Two distinct transactions",
+      "requirement": "Records showing the two charges correspond to two separate orders, or that one was already refunded.",
+      "evidence_fields": [
+        "billing_proof",
+        "refund_confirmation"
+      ],
+      "necessity": "required",
+      "note": "The most winnable condition in the set, because it turns on records the merchant already holds.",
+      "citation": {
+        "document": "Visa Core Rules, dispute condition 12.6",
+        "section": "Duplicate processing",
+        "url": "https://razorpay.com/docs/payments/disputes/submit-evidence/"
+      },
+      "verified": false
+    },
+    {
+      "id": "visa-all-rebuttal-letter",
+      "reason_code": null,
+      "title": "Rebuttal letter",
+      "requirement": "A written explanation of why the cardholder is not entitled to the refund, referring to the specific documents supplied.",
+      "evidence_fields": [
+        "explanation_letter"
+      ],
+      "necessity": "required",
+      "note": "Applies to every dispute condition. This is the artefact vakil.draft generates, and the only one where a model writes text that is filed.",
+      "citation": {
+        "document": "Razorpay dispute representment",
+        "section": "Merchant's rebuttal letter",
+        "url": "https://razorpay.com/docs/payments/disputes/submit-evidence/"
+      },
+      "verified": true
+    },
+    {
+      "id": "visa-vamp-dispute-ratio",
+      "reason_code": null,
+      "title": "VAMP dispute monitoring",
+      "requirement": "Visa monitors merchant dispute ratios and applies fines and review above programme thresholds. Disputes count toward the ratio when raised; a successful representment is not assumed to remove them.",
+      "evidence_fields": [],
+      "necessity": "context",
+      "note": "This is why pre-emptive refunds are modelled in a separate lane. See D4 in docs/DECISIONS.md. Programmes differ on removal; we take the conservative reading.",
+      "citation": {
+        "document": "Visa Acquirer Monitoring Program (VAMP), 2026 thresholds",
+        "section": "Dispute ratio",
+        "url": "https://cside.com/blog/vamp-2026-merchant-playbook"
+      },
+      "verified": false
+    }
+  ]
+}

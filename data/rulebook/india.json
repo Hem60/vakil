@@ -1,0 +1,81 @@
+{
+  "network": "india",
+  "source_note": "India-specific dispute context: RBI directions and NPCI's UPI dispute framework. Authored summaries with citations, not regulatory text. These entries are context for drafting and for the threat model - they are not scored by the win model, because UPI disputes do not flow through the card-network representment path this system automates.",
+  "rules": [
+    {
+      "id": "npci-upi-not-a-chargeback",
+      "reason_code": null,
+      "title": "UPI disputes are not card chargebacks",
+      "requirement": "UPI disputes are resolved through NPCI's dispute management system via the payment service provider, not through card-network representment. The evidence model, deadlines and remedies all differ.",
+      "evidence_fields": [],
+      "necessity": "context",
+      "note": "Scope boundary. Vakil handles card-network disputes only. A UPI dispute reaching this pipeline should be routed out, not argued - a limitation stated plainly rather than papered over.",
+      "citation": {
+        "document": "NPCI UPI dispute and grievance redressal framework",
+        "section": "Tiered resolution: PSP to NPCI",
+        "url": "https://www.npci.org.in/what-we-do/upi/product-overview"
+      },
+      "verified": false
+    },
+    {
+      "id": "rbi-merchant-not-protected",
+      "reason_code": null,
+      "title": "Merchants have no equivalent of cardholder protection",
+      "requirement": "RBI's consumer-protection framework limits customer liability for unauthorised transactions. It creates no matching protection for merchants, who bear the loss unless they successfully contest.",
+      "evidence_fields": [],
+      "necessity": "context",
+      "note": "This asymmetry is the reason the product exists. The cardholder has a regulator; the merchant has a deadline.",
+      "citation": {
+        "document": "RBI - Customer Protection: Limiting Liability of Customers in Unauthorised Electronic Banking Transactions",
+        "section": "Limited liability of a customer",
+        "url": "https://razorpay.com/blog/payment-gateways-reduce-fraud-risk"
+      },
+      "verified": false
+    },
+    {
+      "id": "india-rto-cod-context",
+      "reason_code": "13.1",
+      "title": "Return-to-origin and cash-on-delivery context",
+      "requirement": "Indian ecommerce carries high return-to-origin rates, and delivery documentation quality varies sharply by carrier. Proof-of-delivery scans are often photographs rather than structured records.",
+      "evidence_fields": ["shipping_proof"],
+      "necessity": "context",
+      "note": "Why the extraction stage needs a vision model rather than a PDF text parser. See day 5.",
+      "citation": {
+        "document": "Razorpay - how payment gateways reduce fraud risk (2026)",
+        "section": "Returns and delivery risk",
+        "url": "https://razorpay.com/blog/payment-gateways-reduce-fraud-risk"
+      },
+      "verified": false
+    },
+    {
+      "id": "razorpay-evidence-minimum",
+      "reason_code": null,
+      "title": "At least one document is required to contest",
+      "requirement": "A representment submitted through Razorpay must carry at least one document id across the evidence object's fields. Submitting moves the dispute from open to under_review.",
+      "evidence_fields": [],
+      "necessity": "required",
+      "note": "Enforced by the mock in vakil.file.mock_razorpay so the filing path fails the same way the real API would.",
+      "citation": {
+        "document": "Razorpay Docs - Submit Evidence",
+        "section": "Evidence submission requirements",
+        "url": "https://razorpay.com/docs/payments/disputes/submit-evidence/"
+      },
+      "verified": true
+    },
+    {
+      "id": "razorpay-respond-by-deadline",
+      "reason_code": null,
+      "title": "Response deadline",
+      "requirement": "Each dispute carries a respond_by timestamp. Evidence submitted after it is not considered, and the dispute is lost by default.",
+      "evidence_fields": [],
+      "necessity": "required",
+      "note": "Enforced in vakil.rules.deadlines, which short-circuits expired disputes before any model call is paid for.",
+      "citation": {
+        "document": "Razorpay Docs - Disputes entity",
+        "section": "respond_by",
+        "url": "https://razorpay.com/docs/api/disputes/entity/"
+      },
+      "verified": true
+    }
+  ]
+}
