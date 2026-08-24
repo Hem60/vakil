@@ -23,6 +23,16 @@ class Settings(BaseSettings):
     #: so that trade can be made on measurements rather than on vibes.
     vakil_extract_model: str = "claude-opus-5"
 
+    # --- Gemini, second extraction backend ---
+    #: Present because the Anthropic account has no credit, not because a
+    #: mixed stack is desirable. The extraction eval reports both backends
+    #: side by side so the choice rests on measurements. See D10.
+    gemini_api_key: str = ""
+    vakil_gemini_model: str = "gemini-2.5-flash"
+    #: Free-tier requests per minute. The extractor throttles to this rather
+    #: than discovering the limit through a wall of 429s.
+    vakil_gemini_rpm: int = 10
+
     database_url: str = "postgresql://vakil:vakil@localhost:5432/vakil"
 
     # --- Fight-or-Fold economics, all paise ---

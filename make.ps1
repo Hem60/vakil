@@ -11,7 +11,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Position = 0)]
-    [ValidateSet('help', 'install', 'data', 'fixtures', 'fit', 'extract', 'extract-stub', 'test', 'lint', 'eval', 'sweep', 'demo', 'verify', 'rules', 'up', 'down', 'clean')]
+    [ValidateSet('help', 'install', 'data', 'fixtures', 'fit', 'extract-gemini', 'extract-claude', 'extract-stub', 'test', 'lint', 'eval', 'sweep', 'demo', 'verify', 'rules', 'up', 'down', 'clean')]
     [string]$Target = 'help',
 
     [Parameter(Position = 1)]
@@ -45,7 +45,8 @@ switch ($Target) {
         Write-Host "  .\make.ps1 fixtures  render the proof-of-delivery documents"
         Write-Host "  .\make.ps1 fit       fit the win model on data/train"
         Write-Host "  .\make.ps1 extract-stub   score extraction, no key, no spend"
-        Write-Host "  .\make.ps1 extract 20     score extraction on 20 real documents"
+        Write-Host "  .\make.ps1 extract-gemini 20  score extraction, Gemini free tier"
+        Write-Host "  .\make.ps1 extract-claude 20  score extraction, Claude"
         Write-Host "  .\make.ps1 test      run the unit tests"
         Write-Host "  .\make.ps1 eval      held-out evaluation      -> evals\report.md"
         Write-Host "  .\make.ps1 sweep     cost sensitivity sweep   -> evals\cost_sweep.md"
@@ -66,8 +67,9 @@ switch ($Target) {
     'data'   { Invoke-Step 'generating corpus' { & $Py data\generator\generate.py --seed $Seed --n $N } }
     'fixtures' { Invoke-Step 'rendering POD documents' { & $Py data\generator\fixtures.py --seed $Seed } }
     'fit'    { Invoke-Step 'fitting win model' { & $Py scripts\fit_win_model.py } }
-    'extract-stub' { Invoke-Step 'scoring extraction (stub)' { & $Py evals\extraction_eval.py --stub } }
-    'extract' { $n = if ($Arg) { $Arg } else { '0' }; Invoke-Step 'scoring extraction' { & $Py evals\extraction_eval.py --limit $n } }
+    'extract-stub' { Invoke-Step 'scoring extraction (stub)' { & $Py evals\extraction_eval.py --backend stub } }
+    'extract-gemini' { $n = if ($Arg) { $Arg } else { '0' }; Invoke-Step 'scoring extraction (gemini)' { & $Py evals\extraction_eval.py --backend gemini --limit $n } }
+    'extract-claude' { $n = if ($Arg) { $Arg } else { '0' }; Invoke-Step 'scoring extraction (claude)' { & $Py evals\extraction_eval.py --backend claude --limit $n } }
     'test'   { Invoke-Step 'running tests' { & $Py -m pytest tests -q } }
     'eval'   { Invoke-Step 'held-out evaluation' { & $Py evals\run_eval.py } }
     'sweep'  { Invoke-Step 'cost sensitivity sweep' { & $Py evals\cost_sweep.py } }

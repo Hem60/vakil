@@ -1,0 +1,168 @@
+{
+  "documents": 5,
+  "failures": [],
+  "overall": {
+    "fields_scored": 25,
+    "correct_rate": 0.12,
+    "wrong_rate": 0.56,
+    "abstain_rate": 0.32,
+    "counts": {
+      "correct": 3,
+      "wrong": 14,
+      "abstained": 8
+    },
+    "per_field": {
+      "tracking_id": {
+        "correct": 0,
+        "wrong": 5,
+        "abstained": 0
+      },
+      "carrier": {
+        "correct": 0,
+        "wrong": 5,
+        "abstained": 0
+      },
+      "delivered_at": {
+        "correct": 1,
+        "wrong": 4,
+        "abstained": 0
+      },
+      "signed_by": {
+        "correct": 2,
+        "wrong": 0,
+        "abstained": 3
+      },
+      "delivered_to_address": {
+        "correct": 0,
+        "wrong": 0,
+        "abstained": 5
+      }
+    }
+  },
+  "by_quality": {
+    "clean": {
+      "fields_scored": 5,
+      "correct_rate": 0.2,
+      "wrong_rate": 0.6,
+      "abstain_rate": 0.2,
+      "counts": {
+        "correct": 1,
+        "wrong": 3,
+        "abstained": 1
+      },
+      "per_field": {
+        "tracking_id": {
+          "correct": 0,
+          "wrong": 1,
+          "abstained": 0
+        },
+        "carrier": {
+          "correct": 0,
+          "wrong": 1,
+          "abstained": 0
+        },
+        "delivered_at": {
+          "correct": 0,
+          "wrong": 1,
+          "abstained": 0
+        },
+        "signed_by": {
+          "correct": 1,
+          "wrong": 0,
+          "abstained": 0
+        },
+        "delivered_to_address": {
+          "correct": 0,
+          "wrong": 0,
+          "abstained": 1
+        }
+      }
+    },
+    "photo": {
+      "fields_scored": 10,
+      "correct_rate": 0.1,
+      "wrong_rate": 0.5,
+      "abstain_rate": 0.4,
+      "counts": {
+        "correct": 1,
+        "wrong": 5,
+        "abstained": 4
+      },
+      "per_field": {
+        "tracking_id": {
+          "correct": 0,
+          "wrong": 2,
+          "abstained": 0
+        },
+        "carrier": {
+          "correct": 0,
+          "wrong": 2,
+          "abstained": 0
+        },
+        "delivered_at": {
+          "correct": 1,
+          "wrong": 1,
+          "abstained": 0
+        },
+        "signed_by": {
+          "correct": 0,
+          "wrong": 0,
+          "abstained": 2
+        },
+        "delivered_to_address": {
+          "correct": 0,
+          "wrong": 0,
+          "abstained": 2
+        }
+      }
+    },
+    "scanned": {
+      "fields_scored": 10,
+      "correct_rate": 0.1,
+      "wrong_rate": 0.6,
+      "abstain_rate": 0.3,
+      "counts": {
+        "correct": 1,
+        "wrong": 6,
+        "abstained": 3
+      },
+      "per_field": {
+        "tracking_id": {
+          "correct": 0,
+          "wrong": 2,
+          "abstained": 0
+        },
+        "carrier": {
+          "correct": 0,
+          "wrong": 2,
+          "abstained": 0
+        },
+        "delivered_at": {
+          "correct": 0,
+          "wrong": 2,
+          "abstained": 0
+        },
+        "signed_by": {
+          "correct": 1,
+          "wrong": 0,
+          "abstained": 1
+        },
+        "delivered_to_address": {
+          "correct": 0,
+          "wrong": 0,
+          "abstained": 2
+        }
+      }
+    }
+  },
+  "usable_proof_rate": 1.0,
+  "cost": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_paise": 0,
+    "paise_per_document": 0
+  },
+  "seconds": 0.0,
+  "model": "stub",
+  "backend": "stub"
+}

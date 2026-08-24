@@ -18,8 +18,9 @@ printouts, flatbed scans and phone photographs, and an accuracy figure that
 does not say which of those it came from is close to meaningless.
 
 Usage:
-  python evals/extraction_eval.py --stub            # no API key, no spend
-  python evals/extraction_eval.py --limit 20        # real calls, 20 documents
+  python evals/extraction_eval.py                          # stub, no key, no spend
+  python evals/extraction_eval.py --backend gemini --limit 20
+  python evals/extraction_eval.py --backend claude --limit 20
 """
 
 from __future__ import annotations
@@ -42,15 +43,20 @@ from vakil.evidence.extract import (  # noqa: E402
     StubExtractor,
     to_delivery_proof,
 )
+from vakil.evidence.gemini import GeminiExtractor  # noqa: E402
 
 DATA = ROOT / "data"
 MANIFEST = DATA / "fixtures" / "MANIFEST.json"
 
 SCORED_FIELDS = ("tracking_id", "carrier", "delivered_at", "signed_by", "delivered_to_address")
 
-#: Per-million-token USD, claude-opus-5. Used only to report cost per case.
-INPUT_USD_PER_MTOK = 5.00
-OUTPUT_USD_PER_MTOK = 25.00
+#: Per-million-token USD, by backend. Used only to report cost per case, so
+#: the free tier honestly reports zero rather than an imputed price.
+PRICING = {
+    "claude": (5.00, 25.00),   # claude-opus-5
+    "gemini": (0.0, 0.0),      # free tier
+    "stub": (0.0, 0.0),
+}
 
 
 def normalise(value: str | None) -> str | None:
@@ -71,7 +77,9 @@ def score_field(predicted: str | None, expected: str | None, legible: bool) -> s
     return "correct" if normalise(predicted) == normalise(expected) else "wrong"
 
 
-def score_document(result: ExtractionResult, expected: dict[str, Any]) -> dict[str, Any]:
+def score_document(
+    result: ExtractionResult, expected: dict[str, Any], pricing: tuple[float, float]
+) -> dict[str, Any]:
     outcomes: dict[str, str] = {}
     for name in SCORED_FIELDS:
         field = getattr(result.extracted, name)
@@ -83,7 +91,7 @@ def score_document(result: ExtractionResult, expected: dict[str, Any]) -> dict[s
         "usable_proof": proof is not None,
         "input_tokens": result.input_tokens,
         "output_tokens": result.output_tokens,
-        "cost_paise": result.cost_paise(INPUT_USD_PER_MTOK, OUTPUT_USD_PER_MTOK),
+        "cost_paise": result.cost_paise(*pricing),
     }
 
 
@@ -112,6 +120,7 @@ def run(
     extractor: Extractor,
     entries: list[dict[str, Any]],
     limit: int = 0,
+    pricing: tuple[float, float] = (0.0, 0.0),
 ) -> dict[str, Any]:
     if limit:
         entries = entries[:limit]
@@ -134,7 +143,7 @@ def run(
             )
             continue
 
-        row = score_document(result, entry["expected"])
+        row = score_document(result, entry["expected"], pricing)
         row["case_id"] = entry["case_id"]
         row["quality"] = entry["quality"]
         by_quality.setdefault(entry["quality"], []).append(row)
@@ -239,10 +248,15 @@ def render(report: dict[str, Any], model: str) -> str:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--stub", action="store_true", help="run without an API key or spend")
+    ap.add_argument(
+        "--backend",
+        choices=("claude", "gemini", "stub"),
+        default="stub",
+        help="which extractor to score; stub needs no key and no spend",
+    )
     ap.add_argument("--limit", type=int, default=0)
-    ap.add_argument("--out", type=Path, default=ROOT / "evals" / "extraction_report.md")
-    ap.add_argument("--json-out", type=Path, default=ROOT / "evals" / "extraction_report.json")
+    ap.add_argument("--out", type=Path, default=None)
+    ap.add_argument("--json-out", type=Path, default=None)
     args = ap.parse_args()
 
     if not MANIFEST.exists():
@@ -250,15 +264,30 @@ def main() -> None:
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
 
     settings = Settings()
-    extractor: Extractor = StubExtractor() if args.stub else ClaudeExtractor(settings)
-    model = "stub" if args.stub else settings.vakil_extract_model
+    extractor: Extractor
+    if args.backend == "gemini":
+        extractor = GeminiExtractor(settings)
+        model = settings.vakil_gemini_model
+    elif args.backend == "claude":
+        extractor = ClaudeExtractor(settings)
+        model = settings.vakil_extract_model
+    else:
+        extractor = StubExtractor()
+        model = "stub"
 
-    report = run(extractor, manifest["entries"], limit=args.limit)
+    report = run(
+        extractor, manifest["entries"], limit=args.limit, pricing=PRICING[args.backend]
+    )
     report["model"] = model
+    report["backend"] = args.backend
 
-    args.json_out.write_text(json.dumps(report, indent=2), encoding="utf-8")
+    # Reports are per-backend so a Gemini run never silently overwrites a
+    # Claude one - the whole point is comparing them.
+    out = args.out or ROOT / "evals" / f"extraction_{args.backend}.md"
+    json_out = args.json_out or ROOT / "evals" / f"extraction_{args.backend}.json"
+    json_out.write_text(json.dumps(report, indent=2), encoding="utf-8")
     markdown = render(report, model)
-    args.out.write_text(markdown, encoding="utf-8")
+    out.write_text(markdown, encoding="utf-8")
     print(markdown)
 
 

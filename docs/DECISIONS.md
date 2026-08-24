@@ -485,3 +485,54 @@ silently describe a model that no longer exists. The model also carries its own
 `source` field into the ledger and the eval report, so a run that quietly fell
 back to the unfitted prior is identifiable after the fact rather than assumed
 away.
+
+---
+
+## D10 · A second extraction backend, because the account has no credit
+
+**24 Aug 2026 · day 5**
+
+The extraction stage was built against Claude and verified as far as the wire:
+the request reached Anthropic and returned a **billing** error rather than a
+validation error, which confirms the request shape is right. The account has no
+credit balance, and buying some was declined.
+
+Track 2's bar is *"measured precision and recall"*. An unmeasured stage is worse
+than one measured on a different vendor's model, so `GeminiExtractor` was added
+behind the same `Extractor` protocol - free tier, reads PDFs, returns structured
+JSON against a supplied schema.
+
+Recorded plainly rather than presented as an architectural preference: **a mixed
+stack is not desirable here, it is a funding constraint.** The system is
+Claude-first and the Claude backend ships either way; Gemini is what makes the
+number exist today. `evals/extraction_gemini.md` and `evals/extraction_claude.md`
+are written separately so neither run silently overwrites the other, and the
+comparison is the point.
+
+Three details worth keeping:
+
+- **Free-tier requests are rate limited**, so the extractor throttles to a
+  configured RPM instead of discovering the limit through a wall of 429s. On 175
+  documents that is the difference between finishing and being throttled into
+  failure. 429 and 5xx are retried with wide spacing (the limit is per minute, so
+  a fast retry just burns another slot); 400 and 403 are not, because a bad key
+  will not improve by waiting.
+- **The response schema is hand-written**, not derived from the Pydantic model.
+  Gemini accepts an OpenAPI subset - no `$defs`, no `$ref`, and nullability is a
+  flag rather than a union - so a generated schema would emit constructs the API
+  rejects.
+- **A blocked candidate raises rather than returning an empty document.** A
+  safety-blocked response has no `parts`; reading that as "the page was blank"
+  would quietly downgrade real evidence to none.
+
+Raw HTTP via httpx rather than the `google-genai` SDK: this is a secondary
+backend behind a two-method protocol, and one REST call is a smaller thing to
+own than another dependency.
+
+### Default extraction model
+
+Separately, the Claude extraction default moved from `claude-sonnet-5` to
+`claude-opus-5`. The sonnet default was chosen for cost without anyone asking
+for it - the wrong way round for a stage whose job is reading damaged scans. On
+175 documents the difference is roughly $3 against $1.20, which is not a reason
+to silently pick the weaker model. The trade is now a documented config line.
