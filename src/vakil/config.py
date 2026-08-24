@@ -17,7 +17,11 @@ class Settings(BaseSettings):
 
     anthropic_api_key: str = ""
     vakil_draft_model: str = "claude-opus-5"
-    vakil_extract_model: str = "claude-sonnet-5"
+    #: Extraction reads degraded scans and phone photographs, so it defaults
+    #: to the strongest model. Downgrading to claude-sonnet-5 costs about a
+    #: third as much; the extraction eval reports accuracy per quality tier
+    #: so that trade can be made on measurements rather than on vibes.
+    vakil_extract_model: str = "claude-opus-5"
 
     database_url: str = "postgresql://vakil:vakil@localhost:5432/vakil"
 
