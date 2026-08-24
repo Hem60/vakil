@@ -1,0 +1,21 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+dist/
+build/
+*.egg-info/
+node_modules/
+.next/
+data/train/*.json
+data/test/*.json
+!data/test/MANIFEST.json
+ledger.db
+*.log
+"screen short"/

@@ -1,0 +1,310 @@
+{
+  "split": "D:\\Razorpay\\vakil\\data\\test",
+  "n": 100,
+  "dataset_sha256": "a67456b827d7fe3dfb69b18c9d5bb02c7b294364820ec5dcbba22ac8fbdf5a4b",
+  "classification": {
+    "tp": 33,
+    "fp": 34,
+    "fn": 0,
+    "tn": 0,
+    "n_decided": 67,
+    "precision": 0.4925,
+    "recall": 1.0,
+    "f1": 0.66,
+    "accuracy": 0.4925
+  },
+  "calibration": {
+    "brier": 0.2593,
+    "max_bin_gap": 0.5268,
+    "bins": [
+      {
+        "range": "0.2-0.3",
+        "n": 9,
+        "predicted": 0.2347,
+        "observed": 0.2222
+      },
+      {
+        "range": "0.3-0.4",
+        "n": 7,
+        "predicted": 0.357,
+        "observed": 0.0
+      },
+      {
+        "range": "0.4-0.5",
+        "n": 10,
+        "predicted": 0.4713,
+        "observed": 0.2
+      },
+      {
+        "range": "0.5-0.6",
+        "n": 4,
+        "predicted": 0.5268,
+        "observed": 0.0
+      },
+      {
+        "range": "0.6-0.7",
+        "n": 18,
+        "predicted": 0.6547,
+        "observed": 0.3889
+      },
+      {
+        "range": "0.7-0.8",
+        "n": 10,
+        "predicted": 0.7476,
+        "observed": 0.4
+      },
+      {
+        "range": "0.8-0.9",
+        "n": 21,
+        "predicted": 0.8445,
+        "observed": 0.5238
+      },
+      {
+        "range": "0.9-1.0",
+        "n": 21,
+        "predicted": 0.9605,
+        "observed": 0.8095
+      }
+    ]
+  },
+  "money_paise": {
+    "vakil": {
+      "cases_fought": 67,
+      "recovered": 22285800,
+      "filing_spend": 1675000,
+      "net": 20610800
+    },
+    "baseline_always_fight": {
+      "cases_fought": 100,
+      "recovered": 28594600,
+      "filing_spend": 2500000,
+      "net": 26094600
+    },
+    "baseline_always_fold": {
+      "cases_fought": 0,
+      "recovered": 0,
+      "filing_spend": 0,
+      "net": 0
+    },
+    "false_positive_cost": 850000,
+    "false_positive_amount_at_risk": 22375700,
+    "uplift_vs_always_fight": -5483800,
+    "uplift_vs_always_fold": 20610800
+  },
+  "by_reason_code": {
+    "13.2": {
+      "n": 13,
+      "fought": 13,
+      "won": 8
+    },
+    "13.3": {
+      "n": 16,
+      "fought": 5,
+      "won": 2
+    },
+    "10.4": {
+      "n": 28,
+      "fought": 19,
+      "won": 9
+    },
+    "13.6": {
+      "n": 13,
+      "fought": 8,
+      "won": 3
+    },
+    "13.1": {
+      "n": 25,
+      "fought": 19,
+      "won": 9
+    },
+    "12.6": {
+      "n": 5,
+      "fought": 3,
+      "won": 2
+    }
+  },
+  "escalations": {
+    "n": 33,
+    "cases": [
+      {
+        "case_id": "case_0003",
+        "reason_code": "13.3",
+        "why": [
+          "low decision confidence"
+        ]
+      },
+      {
+        "case_id": "case_0010",
+        "reason_code": "13.3",
+        "why": [
+          "low decision confidence"
+        ]
+      },
+      {
+        "case_id": "case_0036",
+        "reason_code": "10.4",
+        "why": [
+          "response deadline passed 26.0h ago"
+        ]
+      },
+      {
+        "case_id": "case_0049",
+        "reason_code": "13.1",
+        "why": [
+          "response deadline passed 76.0h ago"
+        ]
+      },
+      {
+        "case_id": "case_0054",
+        "reason_code": "10.4",
+        "why": [
+          "low decision confidence"
+        ]
+      },
+      {
+        "case_id": "case_0063",
+        "reason_code": "13.1",
+        "why": [
+          "response deadline passed 21.0h ago"
+        ]
+      },
+      {
+        "case_id": "case_0066",
+        "reason_code": "10.4",
+        "why": [
+          "response deadline passed 55.0h ago"
+        ]
+      },
+      {
+        "case_id": "case_0068",
+        "reason_code": "13.1",
+        "why": [
+          "response deadline passed 22.0h ago"
+        ]
+      },
+      {
+        "case_id": "case_0075",
+        "reason_code": "13.6",
+        "why": [
+          "low decision confidence"
+        ]
+      },
+      {
+        "case_id": "case_0077",
+        "reason_code": "12.6",
+        "why": [
+          "response deadline passed 38.0h ago"
+        ]
+      },
+      {
+        "case_id": "case_0082",
+        "reason_code": "13.3",
+        "why": [
+          "low decision confidence"
+        ]
+      },
+      {
+        "case_id": "case_0088",
+        "reason_code": "10.4",
+        "why": [
+          "response deadline passed 51.0h ago"
+        ]
+      },
+      {
+        "case_id": "case_0104",
+        "reason_code": "13.6",
+        "why": [
+          "response deadline passed 94.0h ago"
+        ]
+      },
+      {
+        "case_id": "case_0107",
+        "reason_code": "12.6",
+        "why": [
+          "response deadline passed 11.0h ago"
+        ]
+      },
+      {
+        "case_id": "case_0113",
+        "reason_code": "10.4",
+        "why": [
+          "response deadline passed 51.0h ago"
+        ]
+      },
+      {
+        "case_id": "case_0120",
+        "reason_code": "13.1",
+        "why": [
+          "response deadline passed 14.0h ago"
+        ]
+      },
+      {
+        "case_id": "case_0136",
+        "reason_code": "13.3",
+        "why": [
+          "low decision confidence"
+        ]
+      },
+      {
+        "case_id": "case_0141",
+        "reason_code": "13.6",
+        "why": [
+          "response deadline passed 51.0h ago"
+        ]
+      },
+      {
+        "case_id": "case_0153",
+        "reason_code": "13.3",
+        "why": [
+          "low decision confidence"
+        ]
+      },
+      {
+        "case_id": "case_0156",
+        "reason_code": "10.4",
+        "why": [
+          "response deadline passed 59.0h ago"
+        ]
+      },
+      {
+        "case_id": "case_0170",
+        "reason_code": "10.4",
+        "why": [
+          "response deadline passed 12.0h ago"
+        ]
+      },
+      {
+        "case_id": "case_0171",
+        "reason_code": "10.4",
+        "why": [
+          "low decision confidence"
+        ]
+      },
+      {
+        "case_id": "case_0207",
+        "reason_code": "13.3",
+        "why": [
+          "low decision confidence"
+        ]
+      },
+      {
+        "case_id": "case_0213",
+        "reason_code": "13.6",
+        "why": [
+          "low decision confidence"
+        ]
+      },
+      {
+        "case_id": "case_0226",
+        "reason_code": "13.3",
+        "why": [
+          "response deadline passed 55.0h ago"
+        ]
+      }
+    ]
+  },
+  "throughput": {
+    "cases_per_second": 58163.2,
+    "seconds": 0.002
+  }
+}

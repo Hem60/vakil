@@ -1,0 +1,58 @@
+name: eval
+
+# The held-out evaluation runs on every push. If a change moves the numbers,
+# the numbers move in public, in the same commit. That is the whole point.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test-and-eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Lint
+        run: ruff check src tests evals data
+
+      - name: Unit tests
+        run: pytest tests -q
+
+      - name: Regenerate corpus
+        run: python data/generator/generate.py --seed 20260824 --n 300
+
+      - name: Assert the held-out split has not drifted
+        # The manifest hash pins the test set. If a generator change alters it,
+        # every earlier eval report becomes incomparable, and that must be a
+        # deliberate act with a visible diff - never a silent one.
+        run: |
+          git diff --exit-code data/test/MANIFEST.json \
+            || (echo "::error::held-out split changed; update the manifest deliberately" && exit 1)
+
+      - name: Held-out evaluation
+        run: python evals/run_eval.py --fail-under-f1 0.60
+
+      - name: Publish report
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-report
+          path: |
+            evals/report.md
+            evals/report.json
+
+      - name: Summary
+        if: always()
+        run: cat evals/report.md >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,17 @@
+{
+  "seed": 20260824,
+  "n": 100,
+  "sha256": "a67456b827d7fe3dfb69b18c9d5bb02c7b294364820ec5dcbba22ac8fbdf5a4b",
+  "reason_code_distribution": {
+    "10.4": 28,
+    "12.6": 5,
+    "13.1": 25,
+    "13.2": 13,
+    "13.3": 16,
+    "13.6": 13
+  },
+  "positive_rate": 0.43,
+  "label_noise": 0.08,
+  "generated_by": "data/generator/generate.py",
+  "warning": "Synthetic data. No real cardholder or merchant records. See docs/DATA-CARD.md"
+}
