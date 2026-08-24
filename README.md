@@ -80,6 +80,8 @@ Reasoning: [D6 in docs/DECISIONS.md](docs/DECISIONS.md).
 
 ## Run it
 
+Linux / macOS:
+
 ```bash
 make install      # venv + dependencies
 make data         # regenerate the 300-case corpus from seed
@@ -87,6 +89,18 @@ make test         # 38 unit tests
 make eval         # held-out evaluation -> evals/report.md
 make sweep        # cost sensitivity   -> evals/cost_sweep.md
 make demo         # assess one case, then verify the audit chain
+```
+
+Windows PowerShell — `make` is not a Windows command, so
+[`make.ps1`](make.ps1) mirrors the same targets:
+
+```powershell
+.\make.ps1 install
+.\make.ps1 data
+.\make.ps1 test
+.\make.ps1 eval
+.\make.ps1 sweep
+.\make.ps1 demo
 ```
 
 No API keys are needed for any of the above - the entire decision path is

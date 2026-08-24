@@ -304,7 +304,7 @@
     ]
   },
   "throughput": {
-    "cases_per_second": 55859.7,
+    "cases_per_second": 58599.5,
     "seconds": 0.002
   }
 }

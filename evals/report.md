@@ -66,6 +66,6 @@ Uplift vs always-fight Rs -54,838 | vs always-fold Rs 206,108
 - `case_0075` (13.6): low decision confidence
 - `case_0077` (12.6): response deadline passed 38.0h ago
 
-Throughput: 55859.7 cases/sec (decision path only, no model calls).
+Throughput: 58599.5 cases/sec (decision path only, no model calls).
 
 > Synthetic corpus. See docs/DATA-CARD.md for how it was built and what it cannot tell you.
