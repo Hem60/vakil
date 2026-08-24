@@ -33,12 +33,39 @@ from __future__ import annotations
 from vakil.config import Settings
 from vakil.models import CE3Result, Decision, Dispute, EVBreakdown, Verdict
 
-#: Below this confidence the engine refuses to decide and hands the case to a
-#: human. Those refusals become the honest exception list in the eval report.
-ESCALATE_BELOW_CONFIDENCE = 0.35
+#: How far the estimated win probability must sit from the break-even point
+#: before the engine will decide. Below this the case goes to a human.
+#:
+#: Read it as: "our estimate would have to be wrong by more than 8 percentage
+#: points to flip this call." That makes the floor a statement about model
+#: error, which is measurable - once the win model is fitted and calibrated,
+#: this should be set from its observed error rather than chosen.
+ESCALATE_BELOW_MARGIN = 0.08
 
-#: A case whose EV straddles zero by less than this is not a real signal.
-EV_INDIFFERENCE_BAND = 5_000
+#: Distance from break-even at which the engine is fully confident. Confidence
+#: is the margin scaled by this, clamped to 1.0, so the auto-file gate stays a
+#: number in [0, 1].
+FULL_CONFIDENCE_MARGIN = 0.25
+
+
+def breakeven_probability(amount: int, cfg: Settings) -> float:
+    """The win probability at which fighting exactly breaks even.
+
+    Net EV is `p*A - C - (1-p)*X` for amount A, filing cost C and arbitration
+    exposure X. Setting that to zero and solving:
+
+        p* = (C + X) / (A + X)
+
+    Everything the decision depends on collapses into this one number. A large
+    dispute has a low break-even (fight on thin odds); a small one has a high
+    break-even (only fight when nearly certain). A `p*` above 1.0 means no win
+    probability could justify filing - the cost structure has priced the case
+    out entirely - and the engine folds without deliberating.
+    """
+    denominator = amount + cfg.vakil_arbitration_exposure
+    if denominator <= 0:
+        return float("inf")
+    return (cfg.vakil_representment_cost + cfg.vakil_arbitration_exposure) / denominator
 
 
 def vamp_pressure(ratio: float, threshold: float) -> float:
@@ -77,33 +104,40 @@ def evaluate(
         net_ev=net,
     )
 
-    confidence = _confidence(p_win, net, dispute.amount)
+    p_star = breakeven_probability(dispute.amount, cfg)
+    margin = p_win - p_star
+    confidence = round(min(abs(margin) / FULL_CONFIDENCE_MARGIN, 1.0), 4)
 
-    if exceptions or confidence < ESCALATE_BELOW_CONFIDENCE:
+    if exceptions or abs(margin) < ESCALATE_BELOW_MARGIN:
         return Decision(
             dispute_id=dispute.id,
             verdict=Verdict.ESCALATE,
             ev=ev,
             ce3=ce3,
             confidence=confidence,
-            rationale=_escalation_rationale(exceptions, confidence),
+            rationale=_escalation_rationale(exceptions, p_win, p_star),
             autofile=False,
-            exceptions=exceptions or ("low decision confidence",),
+            exceptions=exceptions
+            or (f"win estimate {p_win:.2f} within {ESCALATE_BELOW_MARGIN:.0%} of break-even "
+                f"{p_star:.2f}",),
         )
 
-    if net > EV_INDIFFERENCE_BAND:
+    if margin > 0:
         verdict = Verdict.FIGHT
         rationale = (
-            f"expected recovery {_r(gross)} exceeds {_r(cfg.vakil_representment_cost)} "
-            f"filing cost plus {_r(arbitration)} arbitration exposure; net {_r(net)}. "
-            f"{ce3.reason}"
+            f"win estimate {p_win:.0%} clears the {p_star:.0%} break-even for a "
+            f"{_r(dispute.amount)} dispute by {margin:+.0%}; expected recovery {_r(gross)} "
+            f"against {_r(cfg.vakil_representment_cost)} filing cost plus {_r(arbitration)} "
+            f"arbitration exposure, net {_r(net)}. {ce3.reason}"
         )
     else:
         verdict = Verdict.FOLD
         rationale = (
-            f"expected recovery {_r(gross)} does not cover {_r(cfg.vakil_representment_cost)} "
-            f"filing cost plus {_r(arbitration)} arbitration exposure; net {_r(net)}. "
-            f"Contesting would burn money on a case that probably loses. {ce3.reason}"
+            f"win estimate {p_win:.0%} falls {abs(margin):.0%} short of the {p_star:.0%} "
+            f"break-even for a {_r(dispute.amount)} dispute; expected recovery {_r(gross)} "
+            f"does not cover {_r(cfg.vakil_representment_cost)} filing cost plus "
+            f"{_r(arbitration)} arbitration exposure, net {_r(net)}. Contesting would burn "
+            f"money on a case that probably loses. {ce3.reason}"
         )
 
     autofile = (
@@ -159,24 +193,14 @@ def evaluate_pre_dispute(
     return verdict, ev
 
 
-def _confidence(p_win: float, net_ev: int, amount: int) -> float:
-    """How sure are we of the *verdict* - which is not how likely we are to win.
-
-    Deliberately a function of EV margin alone. An earlier version also rewarded
-    p_win for being far from 0.5, which was wrong: a well-calibrated 0.45 is a
-    precisely known quantity, not an uncertain one, and penalising it escalated
-    cases whose arithmetic was in fact unambiguous. What makes a verdict shaky
-    is EV sitting near zero relative to the money on the table.
-    """
-    if amount <= 0:
-        return 0.0
-    return round(min(abs(net_ev) / amount, 1.0), 4)
-
-
-def _escalation_rationale(exceptions: tuple[str, ...], confidence: float) -> str:
+def _escalation_rationale(exceptions: tuple[str, ...], p_win: float, p_star: float) -> str:
     if exceptions:
         return "refusing to decide: " + "; ".join(exceptions)
-    return f"refusing to decide: verdict confidence {confidence:.2f} below floor"
+    return (
+        f"refusing to decide: win estimate {p_win:.0%} sits within "
+        f"{ESCALATE_BELOW_MARGIN:.0%} of the {p_star:.0%} break-even, so an error "
+        f"smaller than the model's own would flip the call"
+    )
 
 
 def _r(paise: int) -> str:

@@ -99,7 +99,8 @@ is not confident, it is untested. Current refusal triggers:
 - the response window has closed
 - no order record, so the transaction cannot be established
 - evidence under 25% complete
-- verdict confidence below 0.35 — EV too close to zero relative to the amount
+- the win estimate sits within 8 percentage points of the break-even
+  probability — an error smaller than the model's own would flip the call
 
 ## Known weaknesses
 
@@ -115,11 +116,12 @@ Listed here so they are found by a reader rather than by a panel.
    confusion matrix is therefore close to uninformative on its own, and should
    be read alongside the sweep rather than instead of it. Resolved as a
    *measurement* question in D6; the model fit on day 6 is what will move it.
-3. **Escalation rate is too high to be useful at high filing costs** — 66% at
-   ₹2,000. The 0.35 confidence floor is proportional to the dispute amount, so
-   raising the filing cost pushes EV toward zero and floods the human queue. An
-   absolute floor (rupees of EV margin) is probably correct. A system that
-   abstains on two thirds of its inbox has not automated anything.
+3. ~~**Escalation rate is too high at high filing costs** — 66% at ₹2,000.~~
+   Fixed in D7 by moving the floor into probability space: escalate when the win
+   estimate sits within 8 points of break-even. Escalation at ₹2,000 fell from
+   66% to 34%, and folds rose from 6 to 14 — the engine now decides rather than
+   abstains. Single-cost precision fell 0.49 → 0.44 as a result, which is the
+   honest direction: abstention had been inflating it.
 4. **Under-tested on 13.3.** Subjective quality disputes are close to
    unwinnable with documents alone, and both the oracle and the model treat them
    as near-noise. Reported per reason code so it cannot hide in the average.
@@ -136,8 +138,9 @@ Listed here so they are found by a reader rather than by a panel.
 | | day |
 |---|---|
 | ~~Cost-sensitivity sweep~~ — done, see D6 | 1 |
-| Absolute rather than proportional confidence floor | 6 |
+| ~~Absolute rather than proportional confidence floor~~ — done, see D7 | 1 |
 | Fitted + isotonic-calibrated win model, refit in CI | 6 |
+| Set the 8-point escalation margin from measured calibration error | 6 |
 | Heavier small-ticket tail in the corpus, where the effect lives | 6 |
 | Provenance gate: claim strip rate, and a leakage check on stripped claims | 7 |
 | Extraction accuracy against fixture PODs with known ground truth | 5 |

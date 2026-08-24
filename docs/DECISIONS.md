@@ -214,7 +214,7 @@ Reading 2 in D5 was right, and more narrowly than expected.
    so and the model is right. Vakil's value on those is the evidence pack and
    the audit trail, not the verdict.
 
-### Open, carried forward
+### Open, carried forward *(resolved same day in D7)*
 
 The escalation rate at Rs 2,000 is 66%, which is too high to be useful - the
 0.35 confidence floor is scaled by dispute amount, so raising the filing cost
@@ -226,3 +226,76 @@ inbox has not automated anything.
 **Not done:** raising `VAKIL_REPRESENTMENT_COST` to 200_000 so the README shows
 a win. The default stays at Rs 250 - the honest marginal cost of an automated
 filing - and the sweep reports what that implies.
+
+---
+
+## D7 · The escalation floor belonged in probability space, not rupees
+
+**24 Aug 2026 · resolves the open item in D6**
+
+D6 left the system abstaining on **66 of 100 cases** at a Rs 2,000 filing cost.
+A system that hands two thirds of its inbox to a human has not automated
+anything.
+
+### Why it happened
+
+Confidence was `min(|net_ev| / amount, 1)` with a floor of 0.35. Net EV shrinks
+as the filing cost rises, so raising the cost dragged every case toward the
+floor at once. The floor was measuring *the cost assumption*, not the strength
+of the decision.
+
+D3 had already moved this once - from a term that penalised mid-range `p_win` -
+and landed on EV margin. That was better but still wrong on the same axis: it
+expressed doubt in rupees, when the thing actually in doubt is a probability.
+
+### The fix
+
+Every input collapses into one number. Net EV is `p·A − C − (1−p)·X` for amount
+A, filing cost C, arbitration exposure X. Set it to zero and solve:
+
+```
+p* = (C + X) / (A + X)
+```
+
+That is the win probability at which fighting exactly breaks even. The verdict
+is just `p_win > p*`, and the *confidence* is the distance `|p_win − p*|`.
+
+Escalate when that distance is under **8 percentage points**, which reads as:
+*our estimate would have to be wrong by less than the model's own error for this
+call to flip.* The floor is now a claim about model error, which is measurable.
+Once the win model is fitted and calibrated on day 6, the 8 points should be set
+from its observed error instead of chosen.
+
+Three properties fall out for free:
+
+- **Scale-free.** The same distance from break-even means the same confidence
+  for a Rs 300 dispute and a Rs 300,000 one.
+- **Cost-stable.** Raising the filing cost moves `p*` and flips verdicts, which
+  is correct, instead of collapsing confidence, which was not.
+- **`p* > 1` is meaningful.** The cost structure has priced the case out
+  entirely; no win probability could justify filing. The engine folds with full
+  confidence rather than deliberating.
+
+### Effect
+
+| | before | after |
+|---|---:|---:|
+| escalated at Rs 250 | 33 | **21** |
+| escalated at Rs 2,000 | 66 | **34** |
+| folds at Rs 2,000 | 6 | **14** |
+| folds at Rs 2,500 | 12 | **21** |
+| robust crossover | Rs 2,000 | Rs 2,000 |
+| small-band uplift at Rs 2,000 (pess) | +Rs 12,000 | **+Rs 14,303** |
+
+The engine now decides rather than abstains, and D6's conclusion survives with a
+larger pessimistic margin than before.
+
+**Single-cost precision fell 0.493 → 0.436.** That is the honest direction: the
+abstention was inflating it. Cases the old floor quietly dropped are now being
+decided and counted, including the ones it gets wrong.
+
+One detail worth noting - at Rs 2,000 the *pessimistic* bound now scores higher
+than the optimistic one (+Rs 16,304 vs +Rs 3,722). That inverts because escalated
+cases now contain genuine winners a human would profitably fight, rather than the
+systematically hopeless ones the old floor was dumping. Escalation has become a
+signal about ambiguity instead of a symptom of the cost assumption.

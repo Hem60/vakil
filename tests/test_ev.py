@@ -11,7 +11,12 @@ from datetime import UTC, datetime, timedelta
 import pytest
 
 from vakil.config import Settings
-from vakil.decide.ev import evaluate, evaluate_pre_dispute, vamp_pressure
+from vakil.decide.ev import (
+    breakeven_probability,
+    evaluate,
+    evaluate_pre_dispute,
+    vamp_pressure,
+)
 from vakil.models import CE3Result, Dispute, ReasonCode, Verdict
 
 NOW = datetime(2026, 8, 24, tzinfo=UTC)
@@ -107,3 +112,95 @@ def test_pre_dispute_lane_flips_under_vamp_pressure(ratio: float, expect: Verdic
         cfg=cfg(vakil_dispute_ratio=ratio, vakil_vamp_max_penalty=400_000),
     )
     assert verdict is expect
+
+
+# ---------------------------------------------------------------------------
+# Break-even margin: the escalation floor lives in probability space, not
+# rupees, so that raising the filing cost moves the threshold instead of
+# flooding the human queue. See D7 in docs/DECISIONS.md.
+# ---------------------------------------------------------------------------
+
+
+def test_breakeven_formula():
+    """p* = (C + X) / (A + X)."""
+    c = cfg()
+    p_star = breakeven_probability(500_000, c)
+    assert p_star == pytest.approx((25_000 + 80_000) / (500_000 + 80_000))
+
+
+def test_breakeven_rises_as_the_dispute_shrinks():
+    """A small dispute must be nearly certain to be worth filing; a large one
+    is worth filing on thin odds. This single number carries the whole
+    Fight-or-Fold thesis."""
+    c = cfg()
+    assert breakeven_probability(5_000_000, c) < breakeven_probability(100_000, c)
+
+
+def test_breakeven_above_one_means_never_worth_filing():
+    """When the cost structure prices a case out entirely, no win probability
+    can rescue it - and the engine folds rather than deliberating."""
+    c = cfg(vakil_representment_cost=200_000)
+    assert breakeven_probability(20_000, c) > 1.0
+    d = evaluate(dispute(amount=20_000), p_win=0.99, ce3=CE3_NO, cfg=c)
+    assert d.verdict is Verdict.FOLD
+    assert d.confidence == 1.0
+
+
+def test_escalates_only_near_breakeven():
+    c = cfg()
+    amount = 500_000
+    p_star = breakeven_probability(amount, c)
+
+    on_the_line = evaluate(dispute(amount=amount), p_win=p_star + 0.01, ce3=CE3_NO, cfg=c)
+    clear_of_it = evaluate(dispute(amount=amount), p_win=p_star + 0.20, ce3=CE3_NO, cfg=c)
+
+    assert on_the_line.verdict is Verdict.ESCALATE
+    assert clear_of_it.verdict is Verdict.FIGHT
+
+
+def test_confidence_is_scale_free():
+    """The same distance from break-even means the same confidence whether the
+    dispute is Rs 300 or Rs 300,000. The previous floor divided EV by the
+    dispute amount, which made confidence collapse as filing costs rose and
+    escalated two thirds of the inbox."""
+    c = cfg()
+    small, large = 30_000, 30_000_000
+    a = evaluate(
+        dispute(amount=small), p_win=breakeven_probability(small, c) + 0.15, ce3=CE3_NO, cfg=c
+    )
+    b = evaluate(
+        dispute(amount=large), p_win=breakeven_probability(large, c) + 0.15, ce3=CE3_NO, cfg=c
+    )
+    assert a.confidence == pytest.approx(b.confidence)
+    assert a.verdict is b.verdict is Verdict.FIGHT
+
+
+def test_raising_filing_cost_does_not_flood_escalation():
+    """Regression for D7. A case comfortably clear of break-even must keep
+    being decided when the filing cost rises - the threshold moves, the
+    verdict flips, but the engine does not abstain."""
+    amount = 300_000
+    cheap = cfg(vakil_representment_cost=25_000)
+    dear = cfg(vakil_representment_cost=200_000)
+
+    d_cheap = evaluate(dispute(amount=amount), p_win=0.55, ce3=CE3_NO, cfg=cheap)
+    d_dear = evaluate(dispute(amount=amount), p_win=0.55, ce3=CE3_NO, cfg=dear)
+
+    assert d_cheap.verdict is Verdict.FIGHT
+    assert d_dear.verdict is Verdict.FOLD
+    assert d_dear.verdict is not Verdict.ESCALATE
+
+
+def test_escalation_rationale_names_the_breakeven():
+    """An abstention that does not say what it was unsure about is not an
+    exception list, it is a shrug."""
+    c = cfg()
+    amount = 500_000
+    d = evaluate(
+        dispute(amount=amount),
+        p_win=breakeven_probability(amount, c) + 0.01,
+        ce3=CE3_NO,
+        cfg=c,
+    )
+    assert "break-even" in d.rationale
+    assert d.exceptions and "break-even" in d.exceptions[0]

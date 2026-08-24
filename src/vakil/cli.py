@@ -15,6 +15,7 @@ from rich.console import Console
 from rich.table import Table
 
 from vakil.config import settings
+from vakil.decide.ev import breakeven_probability
 from vakil.decide.pipeline import assess
 from vakil.ingest.corpus import load_case
 from vakil.ledger.chain import Ledger
@@ -64,7 +65,10 @@ def assess_case(
     table.add_column("term")
     table.add_column("value", justify="right")
     ev = d.ev
+    p_star = breakeven_probability(case.dispute.amount, settings())
     table.add_row("win probability", f"{ev.win_probability:.3f}")
+    table.add_row("break-even probability", f"{p_star:.3f}")
+    table.add_row("margin over break-even", f"{ev.win_probability - p_star:+.3f}")
     table.add_row("dispute amount", _r(ev.dispute_amount))
     table.add_row("gross expected recovery", _r(ev.gross_expected_recovery))
     table.add_row("less filing cost", f"-{_r(ev.representment_cost)}")

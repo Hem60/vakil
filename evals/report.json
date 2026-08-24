@@ -3,15 +3,15 @@
   "n": 100,
   "dataset_sha256": "a67456b827d7fe3dfb69b18c9d5bb02c7b294364820ec5dcbba22ac8fbdf5a4b",
   "classification": {
-    "tp": 33,
-    "fp": 34,
+    "tp": 34,
+    "fp": 44,
     "fn": 0,
-    "tn": 0,
-    "n_decided": 67,
-    "precision": 0.4925,
+    "tn": 1,
+    "n_decided": 79,
+    "precision": 0.4359,
     "recall": 1.0,
-    "f1": 0.66,
-    "accuracy": 0.4925
+    "f1": 0.6071,
+    "accuracy": 0.443
   },
   "calibration": {
     "brier": 0.2593,
@@ -69,10 +69,10 @@
   },
   "money_paise": {
     "vakil": {
-      "cases_fought": 67,
-      "recovered": 22285800,
-      "filing_spend": 1675000,
-      "net": 20610800
+      "cases_fought": 78,
+      "recovered": 23035700,
+      "filing_spend": 1950000,
+      "net": 21085700
     },
     "baseline_always_fight": {
       "cases_fought": 100,
@@ -86,10 +86,10 @@
       "filing_spend": 0,
       "net": 0
     },
-    "false_positive_cost": 850000,
-    "false_positive_amount_at_risk": 22375700,
-    "uplift_vs_always_fight": -5483800,
-    "uplift_vs_always_fold": 20610800
+    "false_positive_cost": 1100000,
+    "false_positive_amount_at_risk": 31614300,
+    "uplift_vs_always_fight": -5008900,
+    "uplift_vs_always_fold": 21085700
   },
   "by_reason_code": {
     "13.2": {
@@ -99,18 +99,18 @@
     },
     "13.3": {
       "n": 16,
-      "fought": 5,
+      "fought": 10,
       "won": 2
     },
     "10.4": {
       "n": 28,
-      "fought": 19,
+      "fought": 22,
       "won": 9
     },
     "13.6": {
       "n": 13,
-      "fought": 8,
-      "won": 3
+      "fought": 11,
+      "won": 4
     },
     "13.1": {
       "n": 25,
@@ -124,20 +124,13 @@
     }
   },
   "escalations": {
-    "n": 33,
+    "n": 21,
     "cases": [
-      {
-        "case_id": "case_0003",
-        "reason_code": "13.3",
-        "why": [
-          "low decision confidence"
-        ]
-      },
       {
         "case_id": "case_0010",
         "reason_code": "13.3",
         "why": [
-          "low decision confidence"
+          "win estimate 0.23 within 8% of break-even 0.15"
         ]
       },
       {
@@ -152,13 +145,6 @@
         "reason_code": "13.1",
         "why": [
           "response deadline passed 76.0h ago"
-        ]
-      },
-      {
-        "case_id": "case_0054",
-        "reason_code": "10.4",
-        "why": [
-          "low decision confidence"
         ]
       },
       {
@@ -183,24 +169,10 @@
         ]
       },
       {
-        "case_id": "case_0075",
-        "reason_code": "13.6",
-        "why": [
-          "low decision confidence"
-        ]
-      },
-      {
         "case_id": "case_0077",
         "reason_code": "12.6",
         "why": [
           "response deadline passed 38.0h ago"
-        ]
-      },
-      {
-        "case_id": "case_0082",
-        "reason_code": "13.3",
-        "why": [
-          "low decision confidence"
         ]
       },
       {
@@ -239,24 +211,10 @@
         ]
       },
       {
-        "case_id": "case_0136",
-        "reason_code": "13.3",
-        "why": [
-          "low decision confidence"
-        ]
-      },
-      {
         "case_id": "case_0141",
         "reason_code": "13.6",
         "why": [
           "response deadline passed 51.0h ago"
-        ]
-      },
-      {
-        "case_id": "case_0153",
-        "reason_code": "13.3",
-        "why": [
-          "low decision confidence"
         ]
       },
       {
@@ -274,24 +232,10 @@
         ]
       },
       {
-        "case_id": "case_0171",
-        "reason_code": "10.4",
-        "why": [
-          "low decision confidence"
-        ]
-      },
-      {
         "case_id": "case_0207",
         "reason_code": "13.3",
         "why": [
-          "low decision confidence"
-        ]
-      },
-      {
-        "case_id": "case_0213",
-        "reason_code": "13.6",
-        "why": [
-          "low decision confidence"
+          "win estimate 0.22 within 8% of break-even 0.15"
         ]
       },
       {
@@ -300,11 +244,39 @@
         "why": [
           "response deadline passed 55.0h ago"
         ]
+      },
+      {
+        "case_id": "case_0227",
+        "reason_code": "13.1",
+        "why": [
+          "response deadline passed 43.0h ago"
+        ]
+      },
+      {
+        "case_id": "case_0261",
+        "reason_code": "13.1",
+        "why": [
+          "response deadline passed 91.0h ago"
+        ]
+      },
+      {
+        "case_id": "case_0263",
+        "reason_code": "13.3",
+        "why": [
+          "response deadline passed 27.0h ago"
+        ]
+      },
+      {
+        "case_id": "case_0271",
+        "reason_code": "13.3",
+        "why": [
+          "response deadline passed 3.0h ago"
+        ]
       }
     ]
   },
   "throughput": {
-    "cases_per_second": 58599.5,
+    "cases_per_second": 51036.0,
     "seconds": 0.002
   }
 }
