@@ -43,7 +43,7 @@ from vakil.evidence.extract import (  # noqa: E402
     StubExtractor,
     to_delivery_proof,
 )
-from vakil.evidence.gemini import GeminiExtractor  # noqa: E402
+from vakil.evidence.gemini import GeminiExtractor, GeminiUnavailable  # noqa: E402
 
 DATA = ROOT / "data"
 MANIFEST = DATA / "fixtures" / "MANIFEST.json"
@@ -116,38 +116,98 @@ def tally(rows: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+#: Consecutive failures after which the run stops instead of grinding on.
+#: Set from experience, not taste: a run with no breaker spent four hours
+#: discovering, 175 times, a fact the first three failures had established.
+MAX_CONSECUTIVE_FAILURES = 3
+
+
+def load_checkpoint(path: Path) -> dict[str, dict[str, Any]]:
+    """Rows already scored in an earlier run, keyed by document.
+
+    A run that dies - killed, throttled, out of quota - should cost only the
+    documents it had not reached yet. The previous version wrote nothing until
+    the very end, so four hours of work produced an empty file.
+    """
+    if not path.exists():
+        return {}
+    rows: dict[str, dict[str, Any]] = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if line:
+            row = json.loads(line)
+            rows[row["document"]] = row
+    return rows
+
+
 def run(
     extractor: Extractor,
     entries: list[dict[str, Any]],
     limit: int = 0,
     pricing: tuple[float, float] = (0.0, 0.0),
+    checkpoint: Path | None = None,
+    max_consecutive_failures: int = MAX_CONSECUTIVE_FAILURES,
 ) -> dict[str, Any]:
     if limit:
         entries = entries[:limit]
 
     started = time.perf_counter()
+    done = load_checkpoint(checkpoint) if checkpoint else {}
     by_quality: dict[str, list[dict[str, Any]]] = {}
     all_rows: list[dict[str, Any]] = []
     failures: list[dict[str, str]] = []
+    consecutive = 0
+    aborted = ""
+
+    def record(row: dict[str, Any]) -> None:
+        by_quality.setdefault(row["quality"], []).append(row)
+        all_rows.append(row)
+
+    for row in done.values():
+        record(row)
 
     for entry in entries:
+        if entry["document"] in done:
+            continue
+
         path = DATA / entry["document"]
         if not path.exists():
             failures.append({"document": entry["document"], "error": "missing - run make fixtures"})
             continue
+
         try:
             result = extractor.extract(path)
+        except GeminiUnavailable as exc:
+            # The API itself is gone - quota, timeout, no route. The remaining
+            # documents will fail the same way, so stop rather than prove it
+            # 174 more times.
+            aborted = f"{type(exc).__name__}: {exc}"
+            failures.append({"document": entry["document"], "error": aborted})
+            break
         except Exception as exc:  # noqa: BLE001 - one bad page must not void the run
+            consecutive += 1
             failures.append(
                 {"document": entry["document"], "error": f"{type(exc).__name__}: {exc}"}
             )
+            if consecutive >= max_consecutive_failures:
+                aborted = (
+                    f"{consecutive} consecutive failures - stopping. "
+                    f"Last: {type(exc).__name__}: {exc}"
+                )
+                break
             continue
 
+        consecutive = 0
         row = score_document(result, entry["expected"], pricing)
         row["case_id"] = entry["case_id"]
+        row["document"] = entry["document"]
         row["quality"] = entry["quality"]
-        by_quality.setdefault(entry["quality"], []).append(row)
-        all_rows.append(row)
+        record(row)
+
+        if checkpoint:
+            # Append as we go. A killed run keeps everything it finished.
+            with checkpoint.open("a", encoding="utf-8") as fh:
+                fh.write(json.dumps(row) + "\n")
 
     elapsed = time.perf_counter() - started
     tokens_in = sum(r["input_tokens"] for r in all_rows)
@@ -156,6 +216,9 @@ def run(
 
     return {
         "documents": len(all_rows),
+        "resumed_from_checkpoint": len(done),
+        "aborted": aborted,
+        "remaining": max(len(entries) - len(all_rows) - len(failures), 0),
         "failures": failures,
         "overall": tally(all_rows) if all_rows else {},
         "by_quality": {q: tally(rows) for q, rows in sorted(by_quality.items())},
@@ -172,6 +235,32 @@ def run(
         },
         "seconds": round(elapsed, 1),
     }
+
+
+def status_section(report: dict[str, Any]) -> list[str]:
+    """Resume and abort state, stated before any metric.
+
+    A partial run's numbers are not the same claim as a complete run's, and a
+    reader should not have to infer which they are looking at.
+    """
+    lines: list[str] = []
+    if report.get("resumed_from_checkpoint"):
+        lines += [
+            "",
+            f"Resumed from checkpoint: {report['resumed_from_checkpoint']} documents were "
+            "already scored by an earlier run and were not re-sent.",
+        ]
+    if report.get("aborted"):
+        lines += [
+            "",
+            f"> **Run aborted after {report['documents']} documents** - "
+            f"{report['aborted']}",
+            ">",
+            f"> {report.get('remaining', 0)} documents were not attempted. These figures "
+            "describe the documents that completed, not the full set. Re-run to continue "
+            "from the checkpoint.",
+        ]
+    return lines
 
 
 def failure_section(report: dict[str, Any]) -> list[str]:
@@ -196,6 +285,7 @@ def render(report: dict[str, Any], model: str) -> str:
                 "# Extraction evaluation",
                 "",
                 f"**No documents scored** | model `{model}`",
+                *status_section(report),
                 *failure_section(report),
             ]
         )
@@ -204,6 +294,7 @@ def render(report: dict[str, Any], model: str) -> str:
         "# Extraction evaluation",
         "",
         f"{report['documents']} proof-of-delivery documents | model `{model}`",
+        *status_section(report),
         "",
         "Three outcomes, deliberately kept apart. An **abstention** costs a missing",
         "sentence in a rebuttal letter. A **wrong** value puts a fabricated fact in a",
@@ -273,6 +364,17 @@ def main() -> None:
         help="which extractor to score; stub needs no key and no spend",
     )
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument(
+        "--fresh",
+        action="store_true",
+        help="ignore any checkpoint and re-score every document from scratch",
+    )
+    ap.add_argument(
+        "--max-consecutive-failures",
+        type=int,
+        default=MAX_CONSECUTIVE_FAILURES,
+        help="stop the run after this many failures in a row",
+    )
     ap.add_argument("--out", type=Path, default=None)
     ap.add_argument("--json-out", type=Path, default=None)
     args = ap.parse_args()
@@ -293,8 +395,17 @@ def main() -> None:
         extractor = StubExtractor()
         model = "stub"
 
+    checkpoint = ROOT / "evals" / f".extraction_{args.backend}.jsonl"
+    if args.fresh and checkpoint.exists():
+        checkpoint.unlink()
+
     report = run(
-        extractor, manifest["entries"], limit=args.limit, pricing=PRICING[args.backend]
+        extractor,
+        manifest["entries"],
+        limit=args.limit,
+        pricing=PRICING[args.backend],
+        checkpoint=checkpoint,
+        max_consecutive_failures=args.max_consecutive_failures,
     )
     report["model"] = model
     report["backend"] = args.backend

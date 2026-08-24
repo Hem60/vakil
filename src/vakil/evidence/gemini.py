@@ -73,9 +73,36 @@ RESPONSE_SCHEMA: dict[str, Any] = {
 #: because the limit is per minute, so a fast retry just burns another slot.
 RETRY_DELAYS = (20.0, 45.0, 90.0)
 
+#: Granular timeouts rather than one number. A bare `timeout=120` did not stop
+#: a run that hung for four hours: the connect phase is where a blackholed
+#: route stalls, and it needs its own short ceiling. Read is generous because a
+#: large PDF genuinely takes time to process; connect is not, because a
+#: connection that has not opened in ten seconds is not going to.
+TIMEOUT = httpx.Timeout(connect=10.0, read=90.0, write=30.0, pool=10.0)
+
 
 class GeminiError(RuntimeError):
     pass
+
+
+class GeminiUnavailable(GeminiError):
+    """The API could not be reached at all - timeout, DNS, refused connection.
+
+    Distinct from a rejected request because the caller should treat it
+    differently: one malformed document is worth skipping, but a network that
+    is not there will not fix itself over the next 174 documents.
+    """
+
+
+#: Phrases Google uses for an exhausted allowance rather than a momentary rate
+#: limit. Matching on text is not lovely, but the status code alone cannot tell
+#: the two apart and the difference is hours of wasted wall-clock.
+QUOTA_MARKERS = ("exceeded your current quota", "quota_exceeded", "quotaexceeded")
+
+
+def _is_quota_exhausted(body: str) -> bool:
+    lowered = body.lower()
+    return any(marker in lowered for marker in QUOTA_MARKERS)
 
 
 class GeminiExtractor:
@@ -104,7 +131,12 @@ class GeminiExtractor:
                 "GEMINI_API_KEY is not set - put it in .env. "
                 "Get one at aistudio.google.com/apikey"
             )
-        client = self._client or httpx.Client(timeout=120.0)
+        if self._client is None:
+            # One client, one connection pool. The previous version built a
+            # fresh client per call, which threw away every kept-alive
+            # connection and its TLS handshake.
+            self._client = httpx.Client(timeout=TIMEOUT)
+        client = self._client
         url = ENDPOINT.format(model=self._settings.vakil_gemini_model)
 
         last_error = ""
@@ -112,15 +144,31 @@ class GeminiExtractor:
             if delay:
                 time.sleep(delay)
             self._wait_for_slot()
-            response = client.post(
-                url,
-                params={"key": self._settings.gemini_api_key},
-                json=payload,
-                headers={"content-type": "application/json"},
-            )
+            try:
+                response = client.post(
+                    url,
+                    params={"key": self._settings.gemini_api_key},
+                    json=payload,
+                    headers={"content-type": "application/json"},
+                )
+            except httpx.TimeoutException as exc:
+                raise GeminiUnavailable(f"request timed out: {exc}") from exc
+            except httpx.TransportError as exc:
+                raise GeminiUnavailable(f"could not reach the API: {exc}") from exc
+
             if response.status_code == 200:
                 return dict(response.json())
             last_error = f"HTTP {response.status_code}: {response.text[:400]}"
+
+            # A 429 comes in two flavours and they need opposite handling. A
+            # per-minute rate limit clears on its own, so waiting is correct.
+            # An exhausted daily quota does not clear for hours, and retrying
+            # it cost this project a four-hour run that produced nothing -
+            # every request was held ~170s before being refused, three times
+            # per document, 175 documents deep.
+            if response.status_code == 429 and _is_quota_exhausted(response.text):
+                raise GeminiUnavailable(f"free-tier quota exhausted: {last_error}")
+
             # Rate limits and transient server errors are worth waiting out.
             # A 400 or 403 is a request or key problem and will not improve.
             if response.status_code not in (429, 500, 503):

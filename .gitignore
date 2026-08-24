@@ -23,3 +23,5 @@ ledger.jsonl
 ledger.db
 *.log
 "screen short"/
+# Extraction checkpoints: resumable run state, not a result.
+evals/.extraction_*.jsonl

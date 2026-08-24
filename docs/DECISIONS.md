@@ -536,3 +536,65 @@ Separately, the Claude extraction default moved from `claude-sonnet-5` to
 for it - the wrong way round for a stage whose job is reading damaged scans. On
 175 documents the difference is roughly $3 against $1.20, which is not a reason
 to silently pick the weaker model. The trade is now a documented config line.
+
+---
+
+## D11 · A four-hour run that produced nothing
+
+**24 Aug 2026 · day 5**
+
+The 175-document extraction run was estimated at ~33 minutes. It was still
+going at four hours and was killed. It produced **zero output**.
+
+The diagnosis, once a single request was allowed to finish: the free-tier daily
+quota was exhausted, and Google holds each request for roughly **170 seconds**
+before returning 429. Three compounding mistakes turned that into four hours:
+
+1. **The retry ladder had no circuit breaker.** `RETRY_DELAYS = (20, 45, 90)`
+   applied per document. With every call taking 170s and failing, each document
+   cost about 11 minutes, and there were 175 of them. The first three failures
+   had already established the fact; the code went on to prove it another 172
+   times.
+2. **429 was treated as one thing.** A per-minute rate limit clears on its own
+   and is worth waiting out. An exhausted daily quota does not clear for hours.
+   The status code cannot tell them apart, so classification now reads the
+   response body - not lovely, but the difference is hours of wall-clock.
+3. **Nothing was written until the end.** Results accumulated in memory and were
+   serialised once, at completion. An end that never arrived meant four hours of
+   real API calls left no trace.
+
+### Fixes
+
+- **`GeminiUnavailable`**, distinct from `GeminiError`. One malformed document
+  is worth skipping; a network or quota wall is not going to improve over the
+  next 174 documents, and the runner stops on it immediately.
+- **Circuit breaker**: three consecutive failures of any kind aborts the run.
+  The counter resets on success, so isolated bad pages do not trip it - a
+  breaker that fires on noise becomes a breaker people disable.
+- **Checkpointing**: every scored document is appended to a JSONL file as it
+  completes. A killed run keeps everything it finished, and re-running resumes
+  rather than restarting. Resumed rows count toward the totals, so the report
+  describes the whole set rather than only what was re-sent.
+- **The report says when it is partial.** An aborted run states how many
+  documents were not attempted, above the metrics. A partial run's numbers are
+  a different claim from a complete run's and a reader should not have to infer
+  which they are looking at.
+- **Granular timeouts.** A bare `timeout=120` did not stop a request that hung;
+  connect now has its own 10-second ceiling, read keeps 90 seconds because a
+  large PDF genuinely takes time. The client is also constructed once rather
+  than per call, which was throwing away every kept-alive connection.
+
+### What the estimate should have been
+
+"~33 minutes" assumed throttling was the only per-document cost and that
+failures would be fast. Both were assumptions stated as fact. The honest
+version was "about 33 minutes if nothing goes wrong, and I have not measured
+what happens when something does."
+
+### Standing result
+
+The 10-document run completed before the quota ran out and remains valid: 50
+fields, 100% correct, zero fabrication, spot-checked against actual values on a
+photo-tier document. Whether that holds across 875 fields is still unmeasured -
+and if it does hold, the likely reading is that the fixtures are too easy rather
+than that extraction is solved.
