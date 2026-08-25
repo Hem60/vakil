@@ -40,13 +40,21 @@ jobs:
       - name: Render POD fixtures
         run: python data/generator/fixtures.py --seed 20260824
 
-      - name: Assert the held-out split has not drifted
-        # The manifest hash pins the test set. If a generator change alters it,
-        # every earlier eval report becomes incomparable, and that must be a
-        # deliberate act with a visible diff - never a silent one.
+      - name: Assert the held-out split and fixtures have not drifted
+        # These manifests pin the test set and the rendered documents. If a
+        # generator change alters either, every earlier report becomes
+        # incomparable, and that must be a deliberate act with a visible diff -
+        # never a silent one.
+        #
+        # data/fixtures/MANIFEST.json was meant to be here from the start; an
+        # edit that was supposed to add it silently failed to apply, so this
+        # step spent two runs passing while checking less than advertised. A
+        # guard nobody verifies is not a guard.
         run: |
-          git diff --exit-code data/test/MANIFEST.json \
-            || (echo "::error::held-out split changed; update the manifest deliberately" && exit 1)
+          if ! git diff --exit-code data/test/MANIFEST.json data/fixtures/MANIFEST.json; then
+            echo "::error::corpus or fixture manifest changed; regenerate and commit deliberately"
+            exit 1
+          fi
 
       - name: Refit the win model
         run: python scripts/fit_win_model.py
@@ -56,7 +64,10 @@ jobs:
         # a training step. If training data changes and the artefact does not,
         # every reported number silently describes a model that no longer exists.
         run: |
-          git diff --exit-code data/model/win_model.json \n            || (echo "::error::committed win model is stale; run make fit and commit" && exit 1)
+          if ! git diff --exit-code data/model/win_model.json; then
+            echo "::error::committed win model is stale; run 'make fit' and commit the result"
+            exit 1
+          fi
 
       - name: Held-out evaluation
         run: python evals/run_eval.py --fail-under-f1 0.60
