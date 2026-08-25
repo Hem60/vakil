@@ -3,7 +3,7 @@ SEED ?= 20260824
 LIMIT ?= 0
 N ?= 300
 
-.PHONY: help install data fixtures fit extract-gemini extract-claude extract-stub eval sweep test lint demo verify rules clean up down
+.PHONY: help install data fixtures fit draft draft-without-proof extract-gemini extract-claude extract-stub eval sweep test lint demo verify rules clean up down
 
 help:
 	@echo "make install   create .venv and install dependencies"
@@ -18,6 +18,7 @@ help:
 	@echo "make sweep     cost sensitivity sweep, write evals/cost_sweep.md"
 	@echo "make demo      assess one case end to end and verify the audit chain"
 	@echo "make rules CODE=13.1   what the networks require, with citations"
+	@echo "make draft / draft-without-proof   the provenance gate demo"
 	@echo "make up/down   start/stop postgres + api + web"
 
 install:
@@ -66,6 +67,15 @@ verify:
 
 rules:
 	PYTHONPATH=src $(PY) -m vakil.cli rules $(CODE)
+
+# The provenance demo: draft a letter, then draft it again with the courier
+# document withdrawn. The delivery sentences leave rather than being invented.
+CASE ?= data/test/case_0006.json
+draft:
+	PYTHONPATH=src $(PY) -m vakil.cli draft $(CASE)
+
+draft-without-proof:
+	PYTHONPATH=src $(PY) -m vakil.cli draft $(CASE) --drop delivery
 
 up:
 	docker compose up -d

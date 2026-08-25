@@ -17,10 +17,19 @@ from rich.table import Table
 from vakil.config import settings
 from vakil.decide.ev import breakeven_probability
 from vakil.decide.pipeline import assess, default_rulebook
+from vakil.draft.facts import build_fact_index
+from vakil.draft.letter import (
+    ClaudeDrafter,
+    Drafter,
+    GeminiDrafter,
+    TemplateDrafter,
+    compose,
+)
 from vakil.ingest.corpus import load_case
 from vakil.ledger.chain import Ledger
 from vakil.models import ReasonCode, Verdict
 from vakil.rulebook.search import BM25Retriever
+from vakil.rules.ce3 import qualifies_ce3
 
 app = typer.Typer(add_completion=False, help="Chargeback defence agent.")
 console = Console()
@@ -160,6 +169,69 @@ def rules(
         )
     console.print(table)
     console.print("[yellow]*[/yellow] [dim]not yet checked against a licensed rulebook[/dim]")
+
+
+@app.command()
+def draft(
+    path: Path = typer.Argument(..., help="Path to a corpus case JSON file"),
+    drop: str = typer.Option(
+        None,
+        "--drop",
+        help="Withdraw one evidence slot before drafting: delivery, support, policy, order",
+    ),
+    backend: str = typer.Option(
+        "template", "--backend", help="template (no key), gemini, or claude"
+    ),
+) -> None:
+    """Draft the rebuttal letter, then show what the provenance gate removed.
+
+    Run it twice - once plainly, once with --drop delivery - and compare. The
+    sentences that depended on the withdrawn document leave the letter rather
+    than being replaced by guesses.
+    """
+    case = load_case(path)
+    bundle = case.bundle
+    if drop:
+        if drop not in {"delivery", "support", "policy", "order"}:
+            raise typer.BadParameter(f"cannot drop {drop!r}")
+        bundle = bundle.model_copy(update={drop: None})
+        console.print(f"[yellow]withdrawn:[/yellow] {drop}\n")
+
+    ce3 = qualifies_ce3(case.dispute, bundle, case.current)
+    index = build_fact_index(case.dispute, bundle, ce3)
+    rules = default_rulebook().requirements_for(case.dispute.reason_code)
+
+    drafter: Drafter
+    if backend == "gemini":
+        drafter = GeminiDrafter(settings())
+    elif backend == "claude":
+        drafter = ClaudeDrafter(settings())
+    else:
+        drafter = TemplateDrafter()
+
+    result = compose(drafter, case.dispute, index, rules)
+
+    console.print(
+        f"[bold]{case.case_id}[/bold]  {case.dispute.reason_code}  "
+        f"drafter={backend}  facts held={len(index.facts)}\n"
+    )
+    console.print("[bold green]FILED LETTER[/bold green]")
+    console.print(result.body() or "[dim](nothing survived - no letter to file)[/dim]")
+    console.print()
+
+    if result.stripped:
+        table = Table(title="Removed before filing", header_style="dim")
+        table.add_column("sentence")
+        table.add_column("why it was removed")
+        for claim in result.stripped:
+            table.add_row(claim.text, claim.note)
+        console.print(table)
+    else:
+        console.print(
+            f"[dim]{len(result.verified)} claims, none removed. "
+            "The template drafter builds sentences from facts, so it cannot "
+            "propose one it does not hold - the gate has nothing to catch.[/dim]"
+        )
 
 
 if __name__ == "__main__":

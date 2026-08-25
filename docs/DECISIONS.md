@@ -670,3 +670,66 @@ Nothing but a second machine was ever going to reveal which one had been built.
 | Corpus regeneration and hash | identical across platforms |
 | Fixture rendering | identical - the Arial/DejaVu font fallback works |
 | Model refit | identical **after** canonicalising the artefact |
+
+---
+
+## D13 · The gate verifies citations, not prose
+
+**25 Aug 2026 · day 7**
+
+The provenance gate is the mechanism the whole "model never decides" claim
+rests on. Building it forced a choice about *what* gets verified.
+
+The obvious design is post-hoc: let the model write a letter, then check whether
+each sentence is supported by the evidence. That check has to read free prose
+and judge whether it "seems supported" - which means a second model marking the
+first model's homework. Two models agreeing is not verification, and neither one
+can be read by a reviewer.
+
+**Chosen instead: the drafter emits structured claims that name their sources.**
+Each sentence carries `cites` (fact ids) and `asserts` (the values the sentence
+states). The gate resolves each citation against a closed fact index built
+deterministically from the harvest, and checks the asserted value matches. It
+either resolves or it does not, the same way every time, in about forty lines a
+reviewer can read.
+
+Everything else follows from that:
+
+- **A fact not in the index cannot be asserted.** Withdraw a courier document
+  and its facts leave the index; every claim citing them stops resolving and
+  leaves the letter. `make draft` against `make draft-without-proof` on the same
+  case shows three sentences disappear - delivery date, signature, tracking -
+  with nothing invented to replace them.
+- **The dangerous failure is a real citation with a wrong value.** It looks
+  sourced and is false. `asserts` is what catches it: cite
+  `delivery.delivered_at` while claiming a date the record does not hold and the
+  sentence is removed with the mismatch named.
+- **A factual claim can hide behind a non-factual label.** Sentences declared
+  "argument" carry no citations, so they are checked differently: they must
+  contain no dates, amounts, tracking numbers or identifiers. A courtesy
+  sentence carrying a date is a factual claim in disguise and is stripped too.
+- **Stripping to nothing is a valid outcome.** If every sentence fails, the
+  letter is empty. That is correct - better than a letter of apologies with the
+  facts quietly removed.
+
+### The template drafter is not a placeholder
+
+`TemplateDrafter` builds the letter from the fact index directly, with no model.
+It exists for three reasons and only the first is convenience:
+
+1. It runs with no API key, so the path is exercised in CI.
+2. It is the **baseline**. If a generated letter does not beat a mechanical one
+   on claims verified, facts used and strip rate, then the model is decoration
+   and the honest thing is to say so. That comparison is day 9's job.
+3. It is the **deadline fallback**. Four hours before a response window closes,
+   a plain letter that files beats an elegant one still waiting on a rate limit.
+
+It cannot hallucinate by construction - each sentence is generated *from* a
+fact, so an absent fact produces no sentence. That is a different guarantee from
+the gate's, and worth keeping distinct: the template is safe structurally, the
+model drafters are safe only because they are checked.
+
+Both model drafters are written and tested against the schema; neither has run
+against a live API yet, because the Anthropic account has no credit and the
+Gemini free tier was exhausted by extraction. The template path is what produces
+the letters above.
