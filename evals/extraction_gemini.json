@@ -1,39 +1,47 @@
 {
-  "documents": 10,
-  "failures": [],
+  "documents": 13,
+  "resumed_from_checkpoint": 7,
+  "aborted": "GeminiUnavailable: free-tier quota exhausted: HTTP 429: {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 5, ",
+  "remaining": 161,
+  "failures": [
+    {
+      "document": "fixtures/pod/0060.pdf",
+      "error": "GeminiUnavailable: free-tier quota exhausted: HTTP 429: {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 5, "
+    }
+  ],
   "overall": {
-    "fields_scored": 50,
+    "fields_scored": 65,
     "correct_rate": 1.0,
     "wrong_rate": 0.0,
     "abstain_rate": 0.0,
     "counts": {
-      "correct": 50,
+      "correct": 65,
       "wrong": 0,
       "abstained": 0
     },
     "per_field": {
       "tracking_id": {
-        "correct": 10,
+        "correct": 13,
         "wrong": 0,
         "abstained": 0
       },
       "carrier": {
-        "correct": 10,
+        "correct": 13,
         "wrong": 0,
         "abstained": 0
       },
       "delivered_at": {
-        "correct": 10,
+        "correct": 13,
         "wrong": 0,
         "abstained": 0
       },
       "signed_by": {
-        "correct": 10,
+        "correct": 13,
         "wrong": 0,
         "abstained": 0
       },
       "delivered_to_address": {
-        "correct": 10,
+        "correct": 13,
         "wrong": 0,
         "abstained": 0
       }
@@ -41,76 +49,76 @@
   },
   "by_quality": {
     "clean": {
-      "fields_scored": 10,
+      "fields_scored": 20,
       "correct_rate": 1.0,
       "wrong_rate": 0.0,
       "abstain_rate": 0.0,
       "counts": {
-        "correct": 10,
+        "correct": 20,
         "wrong": 0,
         "abstained": 0
       },
       "per_field": {
         "tracking_id": {
-          "correct": 2,
+          "correct": 4,
           "wrong": 0,
           "abstained": 0
         },
         "carrier": {
-          "correct": 2,
+          "correct": 4,
           "wrong": 0,
           "abstained": 0
         },
         "delivered_at": {
-          "correct": 2,
+          "correct": 4,
           "wrong": 0,
           "abstained": 0
         },
         "signed_by": {
-          "correct": 2,
+          "correct": 4,
           "wrong": 0,
           "abstained": 0
         },
         "delivered_to_address": {
-          "correct": 2,
+          "correct": 4,
           "wrong": 0,
           "abstained": 0
         }
       }
     },
     "photo": {
-      "fields_scored": 10,
+      "fields_scored": 15,
       "correct_rate": 1.0,
       "wrong_rate": 0.0,
       "abstain_rate": 0.0,
       "counts": {
-        "correct": 10,
+        "correct": 15,
         "wrong": 0,
         "abstained": 0
       },
       "per_field": {
         "tracking_id": {
-          "correct": 2,
+          "correct": 3,
           "wrong": 0,
           "abstained": 0
         },
         "carrier": {
-          "correct": 2,
+          "correct": 3,
           "wrong": 0,
           "abstained": 0
         },
         "delivered_at": {
-          "correct": 2,
+          "correct": 3,
           "wrong": 0,
           "abstained": 0
         },
         "signed_by": {
-          "correct": 2,
+          "correct": 3,
           "wrong": 0,
           "abstained": 0
         },
         "delivered_to_address": {
-          "correct": 2,
+          "correct": 3,
           "wrong": 0,
           "abstained": 0
         }
@@ -157,12 +165,12 @@
   },
   "usable_proof_rate": 1.0,
   "cost": {
-    "input_tokens": 8420,
-    "output_tokens": 1879,
+    "input_tokens": 10946,
+    "output_tokens": 2478,
     "total_paise": 0,
     "paise_per_document": 0
   },
-  "seconds": 114.9,
+  "seconds": 43.4,
   "model": "gemini-3.6-flash",
   "backend": "gemini"
 }

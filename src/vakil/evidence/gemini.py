@@ -94,15 +94,32 @@ class GeminiUnavailable(GeminiError):
     """
 
 
-#: Phrases Google uses for an exhausted allowance rather than a momentary rate
-#: limit. Matching on text is not lovely, but the status code alone cannot tell
-#: the two apart and the difference is hours of wasted wall-clock.
-QUOTA_MARKERS = ("exceeded your current quota", "quota_exceeded", "quotaexceeded")
+#: Markers for an allowance that will not come back today, as opposed to a
+#: per-minute limit that clears on its own.
+#:
+#: The first version matched "exceeded your current quota", which was wrong in
+#: the expensive direction. Google uses that same wording for **both** kinds of
+#: 429, so a per-minute rate limit was being classified as terminal and
+#: aborting runs that would have finished. The tell is the metric name: a daily
+#: allowance names a per-day metric, a rate limit does not.
+DAILY_QUOTA_MARKERS = (
+    "per_day",
+    "perday",
+    "per day",
+    "daily limit",
+    "requests per day",
+)
 
 
 def _is_quota_exhausted(body: str) -> bool:
+    """True only when the allowance is gone until tomorrow.
+
+    Deliberately conservative: a false positive here stops a run that would
+    have succeeded, and a false negative only costs one retry ladder. Anything
+    that is merely a 429 is treated as a rate limit and retried.
+    """
     lowered = body.lower()
-    return any(marker in lowered for marker in QUOTA_MARKERS)
+    return any(marker in lowered for marker in DAILY_QUOTA_MARKERS)
 
 
 class GeminiExtractor:

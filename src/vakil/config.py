@@ -29,9 +29,11 @@ class Settings(BaseSettings):
     #: side by side so the choice rests on measurements. See D10.
     gemini_api_key: str = ""
     vakil_gemini_model: str = "gemini-3.6-flash"
-    #: Free-tier requests per minute. The extractor throttles to this rather
-    #: than discovering the limit through a wall of 429s.
-    vakil_gemini_rpm: int = 10
+    #: Free-tier requests per minute. Measured, not guessed: a 429 for this
+    #: model reported `limit: 5`, and 4 leaves headroom for clock skew
+    #: between our throttle and Google's window. Throttling above the real
+    #: limit does not go faster - it converts successes into 429s.
+    vakil_gemini_rpm: int = 4
 
     database_url: str = "postgresql://vakil:vakil@localhost:5432/vakil"
 

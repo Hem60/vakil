@@ -194,15 +194,30 @@ def test_report_states_that_a_partial_run_is_partial(documents: list[dict], tmp_
 @pytest.mark.parametrize(
     "body",
     [
-        "You exceeded your current quota, please check your plan",
-        '{"error": {"status": "RESOURCE_EXHAUSTED", "message": "quota_exceeded"}}',
+        "Quota exceeded for metric: generate_content_free_tier_requests_per_day_per_model",
+        "You have reached your daily limit",
+        "limit exceeded: 250 requests per day",
     ],
 )
-def test_quota_exhaustion_is_recognised(body: str):
+def test_a_daily_allowance_is_terminal(body: str):
+    """Gone until tomorrow. Retrying costs hours and changes nothing."""
     assert _is_quota_exhausted(body)
 
 
-def test_a_plain_rate_limit_is_not_quota_exhaustion():
-    """A per-minute limit clears on its own and is worth waiting out. Treating
-    it as terminal would abort runs that would have finished."""
-    assert not _is_quota_exhausted("Too many requests, please retry shortly")
+@pytest.mark.parametrize(
+    "body",
+    [
+        # The exact wording Google returns for a per-minute limit. The first
+        # version of this classifier matched "exceeded your current quota" and
+        # so treated this as terminal, aborting runs that would have finished.
+        "You exceeded your current quota. Quota exceeded for metric: "
+        "generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 5",
+        "Too many requests, please retry shortly",
+        '{"error": {"status": "RESOURCE_EXHAUSTED", "message": "rate limit"}}',
+    ],
+)
+def test_a_per_minute_limit_is_not_terminal(body: str):
+    """It clears on its own and is worth waiting out. A false positive here
+    stops a run that would have succeeded; a false negative costs one retry
+    ladder. The asymmetry decides which way to lean."""
+    assert not _is_quota_exhausted(body)

@@ -733,3 +733,65 @@ Both model drafters are written and tested against the schema; neither has run
 against a live API yet, because the Anthropic account has no credit and the
 Gemini free tier was exhausted by extraction. The template path is what produces
 the letters above.
+
+---
+
+## D14 · The quota classifier was wrong in the expensive direction
+
+**25 Aug 2026 · day 7**
+
+D11 added a classifier so an exhausted daily allowance would abort a run rather
+than be retried 175 times. It matched on `"exceeded your current quota"`.
+
+That wording is what Google returns for **both** kinds of 429. The resumed
+extraction run aborted after six documents reporting "free-tier quota
+exhausted", and the error carried the detail that settled it:
+
+```
+Quota exceeded for metric:
+  generativelanguage.googleapis.com/generate_content_free_tier_requests,
+  limit: 5
+```
+
+**Limit 5 - and 23 requests had already succeeded that day.** So 5 was never a
+daily allowance. It is the free tier's requests-per-minute ceiling, and the
+throttle was set to 10: double the real limit, manufacturing the very 429s the
+classifier then read as terminal.
+
+Two fixes, and the second matters more than the first.
+
+**The throttle is now 4 RPM**, measured rather than guessed. Throttling above a
+provider's real limit does not go faster; it converts successes into 429s.
+
+**The classifier now requires a per-day metric** - `per_day`, `daily limit`,
+`requests per day`. Anything else that returns 429 is a rate limit and gets the
+retry ladder.
+
+### The asymmetry is the point
+
+D11 framed this as "retrying a wall wastes hours", which was true, and built a
+detector biased toward calling things terminal. That bias has its own cost, and
+it is the one that bit: **a false positive stops a run that would have
+succeeded; a false negative costs one retry ladder.** Those are not equal, and
+the detector should lean toward retrying. It now does.
+
+Worth noting the shape of the mistake rather than the mistake itself. D11 fixed
+a real problem and introduced a smaller one pointing the other way, because the
+fix was written while the pain of the four-hour run was fresh. Over-correcting
+after a bad failure is ordinary, and the guard against it is asking which
+direction of error is cheaper - not which failure is most recent.
+
+### What is now measured
+
+Extraction has scored **13 documents, 65 fields, 100% correct, zero
+fabrication**, across all three quality tiers. The checkpoint from D11 earned
+its keep on its first real use: a killed run kept all 7 documents it had
+finished, and the resume skipped them.
+
+The 100% still reads as a statement about the fixtures rather than about
+extraction. Synthetic pages rendered from clean vector text and then degraded
+test whether a 2026 vision model can read a blurry document - it can. They do
+not test handwriting across a whole form, folds, thermal fade, occlusion, or
+regional-language fields, which is what real courier documents bring. If the
+full run holds at 100%, the honest write-up is that this benchmark is saturated
+and no longer discriminating.
