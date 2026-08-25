@@ -865,3 +865,66 @@ the case; refusing to file over one absent file would lose the dispute outright.
 The end-to-end run does exactly this - the merchant policy fixture is referenced
 but never rendered, so the filing goes out with the POD alone and the ledger
 says what was left behind.
+
+---
+
+## D16 · "The parts work" and "the system works" are different claims
+
+**25 Aug 2026 · day 8**
+
+Every stage had been built and tested. None had ever been run as one thing
+outside an ad-hoc script, and there was no command that took a dispute from
+record to filing. A judge could not run the system; they could run six pieces
+of it and be told the seams held.
+
+`vakil run` closes that. One invocation, eight stages, each labelled `code` or
+`model` so the boundary the whole design rests on is visible rather than
+asserted:
+
+```
+1 INGEST (code)     2 TRIAGE (code)   3 CE 3.0 (code)   4 DECIDE (code)
+5 DRAFT (model)     6 GATE (code)     7 FILE (code)     8 LEDGER (code)
+```
+
+**It runs with no API key.** The decision path is deterministic, the default
+drafter builds sentences from facts, and filing goes to the bundled mock
+in-process rather than requiring `docker compose up` first. A demo that needs
+credentials and a running server is a demo most people never see.
+
+### Stopping early is the normal outcome
+
+Most disputes should not be filed. `run` reports a fold or an escalation as a
+result with a reason - "verdict is ESCALATE, no letter drafted and nothing
+filed, which is the point" - rather than as a failure. A runner that treated
+those as errors would be arguing with its own decision engine.
+
+### The seam it exposed
+
+Running `--drop delivery` end to end produced something the stage-level tests
+had not: withdrawing the courier document shortens the letter **and then makes
+the filing impossible**, because no documents remain to attach. The runner
+reports:
+
+> filing refused: no documents could be attached - Razorpay requires at least
+> one, and a contest with no evidence is a refusal with extra steps
+
+Two independent guards agreeing about the same missing evidence, neither
+knowing about the other. That coherence is only observable end to end.
+
+### A typing bug that only appeared here
+
+`RazorpayClient` declared its HTTP client as `httpx.Client`. Every test passed,
+because Starlette's `TestClient` duck-types into it - but `TestClient`
+subclasses **`httpx2.Client`**, a different package. The declaration was simply
+false, and mypy caught it the moment the runner needed that substitution
+outside a test file.
+
+A `Protocol` was the obvious fix and does not work: protocol parameters are
+contravariant, so `**kwargs: Any` promises callers may pass any keyword, which
+no real client satisfies. Pinning it precisely would mean copying httpx's full
+signature into the file and re-copying it on every upgrade. It is typed `Any`
+with the reasoning written down, including the consequence worth watching -
+tests and production drive two different HTTP libraries, so a divergence in
+their response APIs would pass tests and break production. The surface this
+module depends on is four methods and three response attributes, which keeps
+that risk small rather than eliminating it.

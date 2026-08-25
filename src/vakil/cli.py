@@ -28,8 +28,10 @@ from vakil.draft.letter import (
 from vakil.ingest.corpus import load_case
 from vakil.ledger.chain import Ledger
 from vakil.models import ReasonCode, Verdict
+from vakil.render import render_run
 from vakil.rulebook.search import BM25Retriever
 from vakil.rules.ce3 import qualifies_ce3
+from vakil.runner import run_case
 
 app = typer.Typer(add_completion=False, help="Chargeback defence agent.")
 console = Console()
@@ -232,6 +234,50 @@ def draft(
             "The template drafter builds sentences from facts, so it cannot "
             "propose one it does not hold - the gate has nothing to catch.[/dim]"
         )
+
+
+@app.command()
+def run(
+    path: Path = typer.Argument(..., help="Path to a corpus case JSON file"),
+    ledger_path: Path = typer.Option(DEFAULT_LEDGER, "--ledger"),
+    now: str = typer.Option("2026-08-24T09:00:00+00:00", "--now", help="Decision clock"),
+    drop: str = typer.Option(
+        None, "--drop", help="Withdraw one evidence slot first: delivery, support, policy"
+    ),
+    backend: str = typer.Option(
+        "template", "--drafter", help="template (no key), gemini, or claude"
+    ),
+    no_file: bool = typer.Option(False, "--no-file", help="stop before filing"),
+    fresh: bool = typer.Option(True, "--fresh/--append", help="start a new ledger"),
+) -> None:
+    """Take one dispute all the way through: decide, draft, gate, file, verify.
+
+    Runs with no API key - the decision path is deterministic and the default
+    drafter builds sentences from facts. Filing goes to the bundled mock in
+    process, because a real dispute cannot be raised on demand in test mode.
+    """
+    if fresh and ledger_path.exists():
+        ledger_path.unlink()
+
+    drafter: Drafter
+    if backend == "gemini":
+        drafter = GeminiDrafter(settings())
+    elif backend == "claude":
+        drafter = ClaudeDrafter(settings())
+    else:
+        drafter = TemplateDrafter()
+
+    ledger = Ledger(ledger_path)
+    result = run_case(
+        path,
+        settings(),
+        datetime.fromisoformat(now).astimezone(UTC),
+        ledger=ledger,
+        drafter=drafter,
+        drop=drop,
+        should_file=not no_file,
+    )
+    render_run(result, settings(), ledger)
 
 
 if __name__ == "__main__":

@@ -11,7 +11,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Position = 0)]
-    [ValidateSet('help', 'install', 'data', 'fixtures', 'fit', 'draft', 'draft-without-proof', 'extract-gemini', 'extract-claude', 'extract-stub', 'test', 'lint', 'eval', 'sweep', 'demo', 'verify', 'rules', 'up', 'down', 'clean')]
+    [ValidateSet('help', 'install', 'data', 'fixtures', 'fit', 'run', 'run-without-proof', 'draft', 'draft-without-proof', 'extract-gemini', 'extract-claude', 'extract-stub', 'test', 'lint', 'eval', 'sweep', 'demo', 'verify', 'rules', 'up', 'down', 'clean')]
     [string]$Target = 'help',
 
     [Parameter(Position = 1)]
@@ -70,6 +70,8 @@ switch ($Target) {
         Write-Host "  .\make.ps1 demo      assess one case, then verify the audit chain"
         Write-Host "  .\make.ps1 verify    walk the audit chain"
         Write-Host "  .\make.ps1 rules 13.1  what the networks require, with citations"
+        Write-Host "  .\make.ps1 run       one dispute end to end, all eight stages"
+        Write-Host "  .\make.ps1 run-without-proof   the same case, courier document withdrawn"
         Write-Host "  .\make.ps1 draft                 draft the rebuttal letter"
         Write-Host "  .\make.ps1 draft-without-proof   same case, courier document withdrawn"
         Write-Host "  .\make.ps1 up/down   start/stop postgres + api + web"
@@ -95,6 +97,8 @@ switch ($Target) {
     'verify' { Invoke-Step 'verifying audit chain' -Verdict { & $Py -m vakil.cli verify } }
     'rules'  { if ($Arg) { & $Py -m vakil.cli rules $Arg } else { & $Py -m vakil.cli rules } }
     'draft'  { $c = if ($Arg) { $Arg } else { 'data/test/case_0006.json' }; Invoke-Step 'drafting letter' { & $Py -m vakil.cli draft $c } }
+    'run'    { $c = if ($Arg) { $Arg } else { 'data/test/case_0019.json' }; Invoke-Step 'running one dispute end to end' { & $Py -m vakil.cli run $c } }
+    'run-without-proof' { $c = if ($Arg) { $Arg } else { 'data/test/case_0019.json' }; Invoke-Step 'end to end, courier document withdrawn' { & $Py -m vakil.cli run $c --drop delivery } }
     'draft-without-proof' { $c = if ($Arg) { $Arg } else { 'data/test/case_0006.json' }; Invoke-Step 'drafting without the courier document' { & $Py -m vakil.cli draft $c --drop delivery } }
 
     'demo' {

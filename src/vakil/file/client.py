@@ -62,12 +62,34 @@ class RazorpayError(RuntimeError):
         self.detail = detail
 
 
+#: An HTTP client offering `get`, `post`, `patch` and `put`, whose responses
+#: carry `.status_code`, `.json()` and `.text`.
+#:
+#: Typed `Any` rather than `httpx.Client`, and that is not laziness. The test
+#: harness passes Starlette's `TestClient`, which subclasses **`httpx2.Client`**
+#: - a different package from the `httpx` used in production. Declaring
+#: `httpx.Client` was simply false, and mypy caught it the moment the runner
+#: needed that substitution outside a test.
+#:
+#: A `Protocol` was the obvious fix and does not work here: protocol parameters
+#: are contravariant, so `**kwargs: Any` promises callers may pass any keyword,
+#: which no real client satisfies. Expressing it precisely would mean copying
+#: httpx's full signature into this file and re-copying it on every upgrade.
+#:
+#: The consequence is worth keeping in view rather than hiding: tests and
+#: production drive two different HTTP libraries. If their response APIs
+#: diverge, tests would pass while production broke. The surface this module
+#: depends on is deliberately four methods and three response attributes, which
+#: is small enough that the risk stays theoretical.
+HttpClient = Any
+
+
 class RazorpayClient:
-    def __init__(self, settings: Settings, client: httpx.Client | None = None) -> None:
+    def __init__(self, settings: Settings, client: HttpClient | None = None) -> None:
         self._settings = settings
         self._client = client
 
-    def _http(self) -> httpx.Client:
+    def _http(self) -> HttpClient:
         if self._client is None:
             self._client = httpx.Client(
                 base_url=self._settings.razorpay_base_url,
@@ -79,7 +101,7 @@ class RazorpayClient:
         return self._client
 
     @staticmethod
-    def _unwrap(response: httpx.Response) -> dict[str, Any]:
+    def _unwrap(response: Any) -> dict[str, Any]:
         if response.status_code >= 400:
             try:
                 payload = response.json()
