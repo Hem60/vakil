@@ -795,3 +795,73 @@ not test handwriting across a whole form, folds, thermal fade, occlusion, or
 regional-language fields, which is what real courier documents bring. If the
 full run holds at 100%, the honest write-up is that this benchmark is saturated
 and no longer discriminating.
+
+---
+
+## D15 · The filing path is mostly refusals
+
+**25 Aug 2026 · day 8**
+
+Stage 7 of 8 had never run. `src/vakil/file/` held only the mock, no client
+existed, and no test had ever imported either - so the one module that can
+change something at a payment provider was entirely unexercised.
+
+It now runs end to end against the mock: `open -> under_review`, documents
+uploaded, evidence attached, contest submitted, every step in the ledger.
+
+### Four gates, each from a specific failure
+
+Most of this module is declining to act:
+
+1. **Verdict must be FIGHT.** Filing a case the engine decided to fold is not a
+   bug in the engine.
+2. **Autonomy must be granted.** `autofile` has been computed on every decision
+   since day 1 and did nothing until now. A system that files everything it can
+   is not bounded, whatever its docs claim.
+3. **The deadline must be open.** Filing after the window is spend with no
+   possible return.
+4. **It must not already be filed.**
+
+### Idempotency reads the ledger, not memory
+
+The fourth gate is the one worth explaining. The case that matters is a retry
+after a crash - and a crash is precisely what destroys in-process state, so a
+memory-based guard is absent exactly when it is needed. `already_filed` walks
+the audit ledger instead.
+
+The `filed` marker is also written **last**, after the contest succeeds. A crash
+mid-flight therefore leaves the dispute refileable rather than marked done: a
+retried filing is recoverable, a duplicate one is not.
+
+### Tested against the mock, not against a fake
+
+The tests drive the real `RazorpayClient` into the real mock app over Starlette's
+`TestClient`, so the mock's own validation runs too - unknown evidence fields,
+document ids that were never uploaded, contests with nothing attached. A
+hand-written stub would have let the client and the server each look correct
+while disagreeing about the wire.
+
+(`httpx.ASGITransport` was the first attempt and is async-only; this client is
+deliberately synchronous.)
+
+### A third undeclared dependency
+
+Importing the mock failed: FastAPI needs `python-multipart` to accept file
+uploads, and it was never declared. The Documents API takes files, so the mock
+had never been importable - and nothing noticed, because no test had ever
+imported it.
+
+That is the same shape as the Pillow bug CI caught on its first run: a package
+present on this machine, absent from the project, invisible until something new
+tried to use it. Two of these now. The lesson is not "declare dependencies" - it
+is that **an unexercised module is not evidence of anything**, and both were
+found the moment something finally ran the code.
+
+### Partial evidence still files
+
+A document referenced but not on disk is skipped, recorded to the ledger as
+`document_missing`, and the filing proceeds. Three of four documents still argue
+the case; refusing to file over one absent file would lose the dispute outright.
+The end-to-end run does exactly this - the merchant policy fixture is referenced
+but never rendered, so the filing goes out with the POD alone and the ledger
+says what was left behind.
