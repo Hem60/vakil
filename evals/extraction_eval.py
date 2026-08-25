@@ -81,13 +81,26 @@ def score_document(
     result: ExtractionResult, expected: dict[str, Any], pricing: tuple[float, float]
 ) -> dict[str, Any]:
     outcomes: dict[str, str] = {}
+    # What a wrong field actually read, kept alongside the verdict. Without it
+    # the checkpoint records that something failed but not what it said, and
+    # diagnosing a single mismatch means re-sending the document - which on a
+    # metered free tier is the difference between investigating a failure and
+    # deciding you cannot afford to.
+    mismatches: dict[str, dict[str, str | None]] = {}
     for name in SCORED_FIELDS:
         field = getattr(result.extracted, name)
         outcomes[name] = score_field(field.value, expected.get(name), field.legible)
+        if outcomes[name] == "wrong":
+            mismatches[name] = {
+                "read": field.value,
+                "expected": expected.get(name),
+                "quote": field.source_quote,
+            }
 
     proof = to_delivery_proof(result)
     return {
         "outcomes": outcomes,
+        "mismatches": mismatches,
         "usable_proof": proof is not None,
         "input_tokens": result.input_tokens,
         "output_tokens": result.output_tokens,
@@ -216,6 +229,7 @@ def run(
 
     return {
         "documents": len(all_rows),
+        "rows": all_rows,
         "resumed_from_checkpoint": len(done),
         "aborted": aborted,
         "remaining": max(len(entries) - len(all_rows) - len(failures), 0),
@@ -260,6 +274,31 @@ def status_section(report: dict[str, Any]) -> list[str]:
             "describe the documents that completed, not the full set. Re-run to continue "
             "from the checkpoint.",
         ]
+    return lines
+
+
+def mismatch_section(report: dict[str, Any]) -> list[str]:
+    """Every field the model got wrong, with what it read and what was true.
+
+    The wrong rate is the headline number, so the wrong cases are the ones
+    worth looking at individually. A rate with no examples behind it cannot be
+    acted on.
+    """
+    rows = [
+        (row["case_id"], row["quality"], field, detail)
+        for row in report.get("rows", [])
+        for field, detail in (row.get("mismatches") or {}).items()
+    ]
+    if not rows:
+        return []
+
+    lines = ["", "## Every wrong field", "", "| case | quality | field | read | truth |",
+             "|---|---|---|---|---|"]
+    for case_id, quality, field, detail in rows[:20]:
+        lines.append(
+            f"| `{case_id}` | {quality} | `{field}` | {detail['read']!r} | "
+            f"{detail['expected']!r} |"
+        )
     return lines
 
 
@@ -344,6 +383,7 @@ def render(report: dict[str, Any], model: str) -> str:
         f"{report['seconds']}s",
     ]
 
+    lines += mismatch_section(report)
     lines += failure_section(report)
 
     lines += [

@@ -111,15 +111,25 @@ DAILY_QUOTA_MARKERS = (
 )
 
 
-def _is_quota_exhausted(body: str) -> bool:
-    """True only when the allowance is gone until tomorrow.
+def _quota_marker(body: str) -> str | None:
+    """The phrase that says this allowance is gone until tomorrow, or None.
+
+    Returns the marker rather than a boolean so the caller can say *why* it
+    decided - a classifier that aborts a run owes the reader its evidence.
 
     Deliberately conservative: a false positive here stops a run that would
     have succeeded, and a false negative only costs one retry ladder. Anything
     that is merely a 429 is treated as a rate limit and retried.
     """
     lowered = body.lower()
-    return any(marker in lowered for marker in DAILY_QUOTA_MARKERS)
+    for marker in DAILY_QUOTA_MARKERS:
+        if marker in lowered:
+            return marker
+    return None
+
+
+def _is_quota_exhausted(body: str) -> bool:
+    return _quota_marker(body) is not None
 
 
 class GeminiExtractor:
@@ -183,8 +193,18 @@ class GeminiExtractor:
             # it cost this project a four-hour run that produced nothing -
             # every request was held ~170s before being refused, three times
             # per document, 175 documents deep.
-            if response.status_code == 429 and _is_quota_exhausted(response.text):
-                raise GeminiUnavailable(f"free-tier quota exhausted: {last_error}")
+            if response.status_code == 429:
+                marker = _quota_marker(response.text)
+                if marker:
+                    # Name the marker that decided it. The body is truncated for
+                    # display, and the per-day metric that triggers this often
+                    # sits past the cut - so without this the report asserts
+                    # "quota exhausted" while showing text that does not say so,
+                    # and the reader cannot tell a correct classification from
+                    # the over-broad one this replaced.
+                    raise GeminiUnavailable(
+                        f"daily quota exhausted (matched {marker!r}): {last_error}"
+                    )
 
             # Rate limits and transient server errors are worth waiting out.
             # A 400 or 403 is a request or key problem and will not improve.

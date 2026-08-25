@@ -1,15 +1,15 @@
 # Extraction evaluation
 
-13 proof-of-delivery documents | model `gemini-3.6-flash`
+21 proof-of-delivery documents | model `gemini-3.6-flash`
 
-Resumed from checkpoint: 7 documents were already scored by an earlier run and were not re-sent.
+Resumed from checkpoint: 21 documents were already scored by an earlier run and were not re-sent.
 
-> **Run aborted after 13 documents** - GeminiUnavailable: free-tier quota exhausted: HTTP 429: {
+> **Run aborted after 21 documents** - GeminiUnavailable: daily quota exhausted (matched 'perday'): HTTP 429: {
   "error": {
     "code": 429,
-    "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 5, 
+    "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20,
 >
-> 161 documents were not attempted. These figures describe the documents that completed, not the full set. Re-run to continue from the checkpoint.
+> 153 documents were not attempted. These figures describe the documents that completed, not the full set. Re-run to continue from the checkpoint.
 
 Three outcomes, deliberately kept apart. An **abstention** costs a missing
 sentence in a rebuttal letter. A **wrong** value puts a fabricated fact in a
@@ -17,8 +17,8 @@ document filed with a bank. The headline number is the wrong rate.
 
 | outcome | rate | n |
 |---|---:|---:|
-| correct | 100.0% | 65 |
-| **wrong** | **0.0%** | 0 |
+| correct | 99.1% | 104 |
+| **wrong** | **0.9%** | 1 |
 | abstained | 0.0% | 0 |
 
 Usable delivery proof produced for 100% of documents.
@@ -28,7 +28,7 @@ Usable delivery proof produced for 100% of documents.
 | quality | correct | wrong | abstained |
 |---|---:|---:|---:|
 | clean | 100.0% | **0.0%** | 0.0% |
-| photo | 100.0% | **0.0%** | 0.0% |
+| photo | 96.7% | **3.3%** | 0.0% |
 | scanned | 100.0% | **0.0%** | 0.0% |
 
 ## By field
@@ -39,18 +39,18 @@ Usable delivery proof produced for 100% of documents.
 | `carrier` | 100.0% | **0.0%** | 0.0% |
 | `delivered_at` | 100.0% | **0.0%** | 0.0% |
 | `signed_by` | 100.0% | **0.0%** | 0.0% |
-| `delivered_to_address` | 100.0% | **0.0%** | 0.0% |
+| `delivered_to_address` | 95.2% | **4.8%** | 0.0% |
 
 ## Cost
 
-10,946 input + 2,478 output tokens | Rs 0.00 total | Rs 0.00 per document | 43.4s
+17,682 input + 4,076 output tokens | Rs 0.00 total | Rs 0.00 per document | 1.1s
 
 ## Failures
 
-- `fixtures/pod/0060.pdf`: GeminiUnavailable: free-tier quota exhausted: HTTP 429: {
+- `fixtures/pod/0100.pdf`: GeminiUnavailable: daily quota exhausted (matched 'perday'): HTTP 429: {
   "error": {
     "code": 429,
-    "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 5, 
+    "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20,
 
 > Synthetic documents rendered by data/generator/fixtures.py. Ground truth is
 > read from the case JSON, not re-authored, so extraction is scored against the
