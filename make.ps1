@@ -31,10 +31,27 @@ if (-not (Test-Path $Py)) { $Py = 'python' }
 $env:PYTHONPATH = Join-Path $PSScriptRoot 'src'
 
 function Invoke-Step {
-    param([string]$Description, [scriptblock]$Body)
+    <#
+    .SYNOPSIS
+      Run one build step.
+
+    .PARAMETER Verdict
+      Treat a non-zero exit as a finding rather than a crash.
+
+      `verify` returns non-zero when the audit chain has been tampered with.
+      That is the tool working, not the script breaking - but the default
+      `throw` buried the one line that mattered under a PowerShell exception
+      dump, which is the wrong thing to have on screen while demonstrating
+      tamper detection to a panel. With -Verdict the exit code still
+      propagates, so CI and shell pipelines behave exactly as before.
+    #>
+    param([string]$Description, [scriptblock]$Body, [switch]$Verdict)
     Write-Host "==> $Description" -ForegroundColor Cyan
     & $Body
-    if ($LASTEXITCODE -ne 0) { throw "$Description failed (exit $LASTEXITCODE)" }
+    if ($LASTEXITCODE -ne 0) {
+        if ($Verdict) { exit $LASTEXITCODE }
+        throw "$Description failed (exit $LASTEXITCODE)"
+    }
 }
 
 switch ($Target) {
@@ -73,7 +90,7 @@ switch ($Target) {
     'test'   { Invoke-Step 'running tests' { & $Py -m pytest tests -q } }
     'eval'   { Invoke-Step 'held-out evaluation' { & $Py evals\run_eval.py } }
     'sweep'  { Invoke-Step 'cost sensitivity sweep' { & $Py evals\cost_sweep.py } }
-    'verify' { Invoke-Step 'verifying audit chain' { & $Py -m vakil.cli verify } }
+    'verify' { Invoke-Step 'verifying audit chain' -Verdict { & $Py -m vakil.cli verify } }
     'rules'  { if ($Arg) { & $Py -m vakil.cli rules $Arg } else { & $Py -m vakil.cli rules } }
 
     'demo' {
@@ -81,7 +98,7 @@ switch ($Target) {
         $case = Get-ChildItem data\test\case_*.json -ErrorAction SilentlyContinue | Select-Object -First 1
         if (-not $case) { throw "no cases found - run .\make.ps1 data first" }
         Invoke-Step "assessing $($case.Name)" { & $Py -m vakil.cli assess-case $case.FullName }
-        Invoke-Step 'verifying audit chain' { & $Py -m vakil.cli verify }
+        Invoke-Step 'verifying audit chain' -Verdict { & $Py -m vakil.cli verify }
     }
 
     'lint' {
