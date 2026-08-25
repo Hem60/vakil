@@ -195,3 +195,35 @@ def test_ce3_remains_the_strongest_evidence_signal():
         name: abs(model.coefficients.get(name, 0.0)) for name in EVIDENCE_FEATURES
     }
     assert max(evidence_weights, key=lambda k: evidence_weights[k]) == "ce3_qualified"
+
+
+@pytest.mark.skipif(not MODEL_PATH.exists(), reason="model not fitted yet")
+def test_every_persisted_float_is_rounded_to_artefact_precision():
+    """CI refits the model and asserts the committed artefact is byte-identical.
+    Raw float64 does not survive a change of platform - the same training data
+    gave a Platt intercept of 0.059706702901627724 on Windows and
+    0.05970670290162777 on Linux. Rounding every persisted float makes the
+    artefact canonical, so the staleness guard tests the training data rather
+    than the C library.
+    """
+    from vakil.decide.fit import ARTIFACT_PRECISION
+
+    payload = json.loads(MODEL_PATH.read_text(encoding="utf-8"))
+
+    def decimals(value: float) -> int:
+        text = repr(float(value))
+        return len(text.split(".")[1]) if "." in text and "e" not in text else 0
+
+    floats: list[tuple[str, float]] = [("intercept", payload["intercept"])]
+    floats += [(f"coefficients.{k}", v) for k, v in payload["coefficients"].items()]
+    calibration = payload["calibration"]
+    floats += [
+        (f"calibration.{k}", v)
+        for k, v in calibration.items()
+        if isinstance(v, (int, float)) and not isinstance(v, bool)
+    ]
+    for i, point in enumerate(calibration.get("breakpoints", [])):
+        floats += [(f"calibration.breakpoints[{i}][{j}]", v) for j, v in enumerate(point)]
+
+    too_precise = [(name, v) for name, v in floats if decimals(v) > ARTIFACT_PRECISION]
+    assert not too_precise, f"unrounded floats will break CI across platforms: {too_precise}"

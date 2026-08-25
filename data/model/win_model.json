@@ -1,6 +1,6 @@
 {
   "source": "fitted",
-  "intercept": -2.640427659099258,
+  "intercept": -2.6404276591,
   "coefficients": {
     "ce3_qualified": 2.150253,
     "signed_delivery_proof": 0.825156,
@@ -20,8 +20,8 @@
   },
   "calibration": {
     "method": "platt",
-    "a": 1.5358264640295003,
-    "b": 0.059706702901627724
+    "a": 1.535826464,
+    "b": 0.0597067029
   },
   "feature_names": [
     "ce3_qualified",

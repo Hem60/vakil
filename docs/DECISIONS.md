@@ -598,3 +598,75 @@ fields, 100% correct, zero fabrication, spot-checked against actual values on a
 photo-tier document. Whether that holds across 875 fields is still unmeasured -
 and if it does hold, the likely reading is that the fixtures are too easy rather
 than that extraction is solved.
+
+---
+
+## D12 · "Reproducible" needed defining
+
+**25 Aug 2026 · first CI runs**
+
+The repository was pushed public and CI ran for the first time. It failed three
+times, and every failure was worth having.
+
+### Run 1 - an undeclared dependency
+
+`ModuleNotFoundError: No module named 'PIL'`. The fixture generator imports
+Pillow; `pyproject.toml` never declared it. It had been pip-installed by hand
+on day 5 and never written down, so **every fresh clone would have failed** at
+`make fixtures` - and nobody would have known until a judge tried to run the
+repo.
+
+This is the argument for pushing before the work is finished rather than after.
+The machine had the dependency; the project did not, and only a second machine
+could tell the difference.
+
+### Run 2 - two broken guards, and the silent one was worse
+
+The model-staleness check failed with `fatal: n: no such path`. A shell line
+continuation had been written as a literal `\n`, so git was handed `"\n"` as a
+path. Loud, obvious, and honest about being broken.
+
+The manifest guard was the real problem. An earlier edit meant to extend it to
+`data/fixtures/MANIFEST.json` had **silently failed to apply**, so for two runs
+it passed while checking less than its own name claimed. A red check tells you
+something is wrong. A green check that verifies less than you believe tells you
+nothing while feeling like assurance - the same failure this project's own
+metrics work keeps arguing against.
+
+Both are now explicit `if` blocks. The backslash continuation bought nothing and
+cost a working guard.
+
+### Run 3 - the artefact was not canonical
+
+With the guard finally running, it caught a real difference:
+
+```
+- "b": 0.059706702901627724     (Windows)
++ "b": 0.05970670290162777      (Linux)
+```
+
+5e-17. Last-bit float64 noise from a different libm implementation of `exp` and
+`log`. Every one of the fifteen coefficients matched exactly, because those were
+rounded to six places - the Platt calibration parameters and the intercept never
+were.
+
+The fix is not more tolerance in the guard, it is a canonical artefact. Every
+persisted float is now rounded to `ARTIFACT_PRECISION = 10`, which is orders of
+magnitude finer than any decision needs and orders of magnitude coarser than
+platform noise. A test asserts it, so the invariant cannot quietly regress.
+
+**The lesson is about the claim, not the bug.** "Deterministic" was written in
+the `fit.py` docstring on day 6 and it was true in the sense meant - same seed,
+same iteration count, no randomness. It was not true in the sense CI tests:
+byte-identical output on any machine. Those are different claims and only one of
+them supports "CI refits the model and asserts the artefact is unchanged".
+Nothing but a second machine was ever going to reveal which one had been built.
+
+### What the three runs proved
+
+| | |
+|---|---|
+| ruff, mypy strict, 143 tests | pass on Linux |
+| Corpus regeneration and hash | identical across platforms |
+| Fixture rendering | identical - the Arial/DejaVu font fallback works |
+| Model refit | identical **after** canonicalising the artefact |

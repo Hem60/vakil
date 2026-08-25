@@ -28,6 +28,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from vakil.decide.fit import (  # noqa: E402
+    ARTIFACT_PRECISION,
     IdentityScaler,
     brier,
     cross_validate_calibration,
@@ -110,7 +111,10 @@ def main() -> None:
     coefficients = dict(zip(FEATURE_NAMES, model_fit.coefficients, strict=True))
 
     model = WinModel(
-        intercept=model_fit.intercept,
+        # Rounded for the same reason as the coefficients and the
+        # calibration: the artefact has to be byte-identical across
+        # platforms or CI's staleness guard cannot mean anything.
+        intercept=round(model_fit.intercept, ARTIFACT_PRECISION),
         coefficients={k: round(v, 6) for k, v in coefficients.items()},
         calibration=scaler,
         source="fitted",

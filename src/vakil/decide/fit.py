@@ -24,6 +24,21 @@ Matrix = Sequence[Vector]
 
 EPS = 1e-12
 
+#: Decimal places kept when a fitted model is written to disk.
+#:
+#: Not cosmetic. CI refits the model and asserts the committed artefact is
+#: unchanged, and raw float64 does not survive a change of platform: the same
+#: training data produced a Platt intercept of 0.059706702901627724 on Windows
+#: and 0.05970670290162777 on Linux - a gap of 5e-17, from a different libm
+#: implementation of exp and log.
+#:
+#: Ten places is far more precision than any decision needs (the smallest
+#: meaningful move in a probability here is around 1e-3) and far coarser than
+#: last-bit noise, so the artefact becomes canonical without losing anything
+#: that matters. A genuine change in the training data moves these parameters
+#: by orders of magnitude more.
+ARTIFACT_PRECISION = 10
+
 
 def sigmoid(z: float) -> float:
     # Split by sign to avoid overflow in exp for large-magnitude logits.
@@ -127,7 +142,11 @@ class PlattScaler:
         return sigmoid(self.a * logit(p) + self.b)
 
     def to_dict(self) -> dict[str, object]:
-        return {"method": "platt", "a": self.a, "b": self.b}
+        return {
+            "method": "platt",
+            "a": round(self.a, ARTIFACT_PRECISION),
+            "b": round(self.b, ARTIFACT_PRECISION),
+        }
 
 
 @dataclass(frozen=True)
@@ -157,7 +176,13 @@ class IsotonicScaler:
         return points[-1][1]
 
     def to_dict(self) -> dict[str, object]:
-        return {"method": "isotonic", "breakpoints": [list(b) for b in self.breakpoints]}
+        return {
+            "method": "isotonic",
+            "breakpoints": [
+                [round(x, ARTIFACT_PRECISION), round(y, ARTIFACT_PRECISION)]
+                for x, y in self.breakpoints
+            ],
+        }
 
 
 @dataclass(frozen=True)

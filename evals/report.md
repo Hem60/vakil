@@ -90,6 +90,6 @@ Uplift vs always-fight: Rs -72,983 without arbitration, Rs -36,983 with it.
 
 Gaps inform but do not gate: a missing document lowers the win probability and the EV engine folds on its own. Escalating every case with a gap would flood the human queue with cases a human cannot fix either.
 
-Throughput: 22762.5 cases/sec (decision path only, no model calls).
+Throughput: 9557.8 cases/sec (decision path only, no model calls).
 
 > Synthetic corpus. See docs/DATA-CARD.md for how it was built and what it > cannot tell you.
