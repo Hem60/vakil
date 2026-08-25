@@ -25,3 +25,8 @@ ledger.db
 "screen short"/
 # Extraction checkpoints: resumable run state, not a result.
 evals/.extraction_*.jsonl
+
+# Personal pitch material, kept out of the repo deliberately. A script
+# telling a panel how to answer their own questions reads badly to that
+# panel. It was committed once by mistake and purged from history.
+docs/PITCH.md
