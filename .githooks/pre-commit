@@ -1,0 +1,37 @@
+#!/bin/sh
+# Block commits containing credentials.
+#
+# This exists because two live API keys reached the history before the first
+# push, both times by being pasted into .env.example - the tracked template -
+# instead of .env. Caught by a manual scan the first time and missed the
+# second, which is what a repeated failure mode with no guard looks like.
+#
+# Runs on staged content only, so it cannot be defeated by an unstaged edit.
+
+patterns='sk-ant-api[0-9]{2}-[A-Za-z0-9_-]{20,}|AIza[A-Za-z0-9_-]{30,}|AQ\.[A-Za-z0-9_-]{30,}|rzp_live_[A-Za-z0-9]{10,}'
+
+staged=$(git diff --cached --name-only --diff-filter=ACM)
+[ -z "$staged" ] && exit 0
+
+found=0
+for file in $staged; do
+    [ -f "$file" ] || continue
+    if git show ":$file" 2>/dev/null | grep -qE "$patterns"; then
+        echo "BLOCKED: $file appears to contain a credential." >&2
+        git show ":$file" | grep -nE "$patterns" | sed 's/\(.\{60\}\).*/\1.../' >&2
+        found=1
+    fi
+done
+
+if [ "$found" = 1 ]; then
+    cat >&2 <<'MSG'
+
+Secrets belong in .env, which is gitignored. .env.example holds empty
+placeholders only.
+
+If this is a false positive, commit with --no-verify - but read the line above
+first, because that is exactly what someone would say about a real key.
+MSG
+    exit 1
+fi
+exit 0
