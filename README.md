@@ -19,21 +19,22 @@ the time; structured evidence pushes past 50%. That gap is the product.
 
 ```powershell
 .\make.ps1 install     # or: make install
-.\make.ps1 test        # 185 tests
-.\make.ps1 demo        # decide one case, then verify the audit chain
+.\make.ps1 test        # 196 tests
+.\make.ps1 run         # one dispute, all eight stages, start to filed
 ```
 
 No API key needed for any of that — the entire decision path is deterministic.
 
-**The two demos worth running:**
+**The two demos worth watching:**
 
 ```powershell
-.\make.ps1 draft ; .\make.ps1 draft-without-proof
+.\make.ps1 run ; .\make.ps1 run-without-proof
 ```
 
-The same case drafted twice, the second with the courier document withdrawn.
-Three sentences — delivery date, signature, tracking — leave the letter rather
-than being invented.
+The same dispute twice, the second with the courier document withdrawn. Three
+sentences — delivery date, signature, tracking — leave the letter rather than
+being invented, and then the filing itself refuses because no documents remain
+to attach. Two independent guards agreeing about the same missing evidence.
 
 ```powershell
 .\make.ps1 demo
@@ -51,7 +52,7 @@ Someone edited a recorded decision. The chain knows.
 
 | | |
 |---|---|
-| ✅ Deterministic core: deadlines, CE 3.0, Fight-or-Fold | 185 tests, mypy strict |
+| ✅ Deterministic core: deadlines, CE 3.0, Fight-or-Fold | 196 tests, mypy strict |
 | ✅ Synthetic corpus, 300 cases, held-out split frozen and hashed | regenerates from seed |
 | ✅ Cited rulebook + evidence-gap analysis | 20 rules, all 6 dispute conditions |
 | ✅ Fitted + calibrated win model | Platt, chosen by cross-validation |
@@ -59,6 +60,7 @@ Someone edited a recorded decision. The chain knows.
 | ✅ Document extraction with abstention | 21 of 175 documents scored |
 | ✅ Provenance gate | claims verified against a closed fact index |
 | ✅ Filing path | `open → under_review` against the mock API |
+| ✅ End-to-end runner | `vakil run` — eight stages, no API key |
 | ✅ Hash-chained audit ledger, replay + verify | tamper detection tested |
 | ⬜ Merchant console | day 10 |
 | ⬜ LangGraph orchestration, Postgres ledger | day 11 |
@@ -217,6 +219,7 @@ Full walkthrough: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 | [docs/DATA-CARD.md](docs/DATA-CARD.md) | how the corpus is built and what it cannot tell you |
 | [docs/THREAT-MODEL.md](docs/THREAT-MODEL.md) | defence-only scope and non-capabilities |
 | [docs/BUILD-PLAN.md](docs/BUILD-PLAN.md) | track selection, competitive analysis, schedule |
+| [docs/PITCH.md](docs/PITCH.md) | five-minute pitch script, timed against measured demo runtimes |
 
 ## Scope
 
