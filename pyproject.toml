@@ -21,6 +21,12 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
+    # Renders the proof-of-delivery fixtures. A dev dependency rather than a
+    # runtime one: the generator builds test data, it is not part of serving a
+    # dispute. CI installs .[dev] and runs `make fixtures`, which is how the
+    # missing declaration was found - it was pip-installed by hand locally and
+    # never written down, so every fresh clone would have failed.
+    "pillow>=11.0",
     "pytest>=8.3",
     "pytest-cov>=6.0",
     "ruff>=0.8",
