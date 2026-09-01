@@ -31,6 +31,7 @@ evals/.extraction_*.jsonl
 # panel. It was committed once by mistake and purged from history.
 docs/PITCH.*
 docs/pitch-commands.ps1
+docs/pitch-diagram.mmd
 # The generator embeds every spoken line, so it is pitch material too -
 # committing the builder would publish exactly what the PDF was kept back for.
 scripts/make_pitch_pdf.py
